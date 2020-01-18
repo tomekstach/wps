@@ -1,0 +1,84 @@
+.dl-obszar-dzialania .wpcf7-form-control.wpcf7-checkbox,
+.dl-produkty-sprzedaz .wpcf7-form-control.wpcf7-checkbox,
+.dl-produkty-wdrozenie .wpcf7-form-control.wpcf7-checkbox,
+.dl-produkty-serwis .wpcf7-form-control.wpcf7-checkbox,
+.dl-produkty-szkolenie .wpcf7-form-control.wpcf7-checkbox,
+.dl-produkty-posiadanie .wpcf7-form-control.wpcf7-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.dl-obszar-dzialania .wpcf7-list-item {
+  flex: 1 0 21%;
+  margin: 5px;
+  height: 30px;
+}
+
+.dl-produkty-sprzedaz .wpcf7-list-item,
+.dl-produkty-wdrozenie .wpcf7-list-item,
+.dl-produkty-serwis .wpcf7-list-item,
+.dl-produkty-szkolenie .wpcf7-list-item,
+.dl-produkty-posiadanie .wpcf7-list-item {
+  flex: 1 0 17%;
+  margin: 5px;
+  height: 30px;
+}
+
+.nip-container {
+  margin-bottom: 35px;
+}
+
+.wpcf7-password::placeholder {
+  color: #999999;
+}
+
+#main .wpcf7-response-output {
+  border-style: solid;
+  border-width: 0;
+  background-clip: padding-box;
+  border-color: #e85656;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-top: 15px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  background-color: #f9c8c7;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e85656;
+  display: none;
+  margin: 20px 0 0 0;
+}
+
+
+/* Edge */
+
+.wpcf7-password::-webkit-input-placeholder {
+  color: #999999;
+}
+
+
+/* Internet Explorer 10-11 */
+
+.wpcf7-password:-ms-input-placeholder {
+  color: #999999;
+}
+
+@media screen and (max-width: 992px) {
+  .dl-obszar-dzialania .wpcf7-list-item,
+  .dl-produkty-sprzedaz .wpcf7-list-item,
+  .dl-produkty-wdrozenie .wpcf7-list-item,
+  .dl-produkty-serwis .wpcf7-list-item,
+  .dl-produkty-szkolenie .wpcf7-list-item,
+  .dl-produkty-posiadanie .wpcf7-list-item {
+    width: 100%;
+    float: none;
+  }
+}

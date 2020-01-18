@@ -1,0 +1,344 @@
+h3.pp-cf7-form-title,
+p.pp-cf7-form-description {
+  display: none;
+}
+
+#formularz {
+  background: linear-gradient(180deg, #EDEFF0 150px, #FFF 100px);
+}
+
+#main .fl-row-content-wrap {
+  padding-top: 0;
+}
+
+#main .fl-module-content.fl-node-content {
+  margin-top: 0;
+}
+
+#main .cf7-row {
+  margin: 0;
+}
+
+#main .container-multistep-header ul.cf7-display-steps-container {
+  align-items: center;
+  justify-content: center;
+}
+
+#main .container-multistep-header ul li {
+  display: flex;
+  height: 150px;
+  border-right: 1px solid #fff;
+  position: relative;
+  margin: 0;
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#main .container-multistep-header ul li b {
+  font-family: 'geomanist medium';
+}
+
+#main .container-multistep-header ul li:first-child {
+  border-left: 1px solid #fff;
+}
+
+#main .container-multistep-header ul li.active,
+#main .container-multistep-header ul li.enabled {
+  background: #d42027 !important;
+}
+
+#main .container-multistep-header ul li.active::after {
+  display: inline-block;
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent !important;
+  border-right: 20px solid transparent;
+  border-top: 20px solid #d42027;
+  position: absolute;
+  bottom: -20px;
+  background: transparent;
+  left: calc(50% - 20px);
+}
+
+#main .container-multistep-header ul li .fl-icon-wrap {
+  display: table;
+  width: 100%;
+}
+
+#main .container-multistep-header ul li .fl-icon-wrap .fl-icon i {
+  float: none;
+  font-size: 35px;
+}
+
+#main .umowa-serwisowa-heading {
+  display: flex;
+  padding-top: 30px;
+}
+
+#main .umowa-serwisowa-heading .number {
+  font: var(--vamtam-h3-font-weight) var(--vamtam-h3-font-size)/var(--vamtam-h3-line-height) var(--vamtam-h3-font-family);
+  font-size: 110px;
+  line-height: 130px;
+  width: 25%;
+  color: #c50a1f;
+  text-align: center;
+}
+
+#main .umowa-serwisowa-heading h2 {
+  font: var(--vamtam-h3-font-weight) var(--vamtam-h3-font-size)/var(--vamtam-h3-line-height) var(--vamtam-h3-font-family);
+  font-size: 50px;
+  line-height: 50px;
+  width: 75%;
+}
+
+#main .umowa-serwisowa-underline {
+  border-top-color: rgb(212, 32, 39) !important;
+  opacity: 1;
+  border-top: 5px solid;
+  width: 27%;
+  max-width: 100%;
+  margin-top: 35px;
+}
+
+#main .wpcf7-form p a {
+  color: rgb(212, 32, 39) !important;
+}
+
+#main .umowa-serwisowa-content {
+  margin: 25px 0 40px 25px;
+}
+
+#main .umowa-serwisowa-content .umowa-serwisowa-print span.middle-text {
+  vertical-align: middle;
+}
+
+#main .umowa-serwisowa-content .umowa-serwisowa-print .fl-icon {
+  display: inline-block;
+}
+
+#main .umowa-serwisowa-content .umowa-serwisowa-print .fl-icon i {
+  float: none;
+  font-size: 30px;
+}
+
+#main .umowa-serwisowa-content .umowa-serwisowa-print .middle-text {
+  display: inline-block;
+  line-height: 40px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+#main .page-wrapper.umowa article {
+  background: linear-gradient(180deg, #EDEFF0 1%, #FFF 30px);
+  padding-top: 50px;
+}
+
+#main .page-wrapper.umowa.solo article {
+  background: transparent;
+}
+
+#main .wpcf7-form .cf7-underline {
+  width: 100px;
+  border-top-color: rgb(212, 32, 39) !important;
+  opacity: 1;
+  border-top: 5px solid;
+  margin: 25px 0;
+}
+
+#main aside.right {
+  margin-top: 0;
+  border-top: 5px solid rgb(212, 32, 39);
+  text-align: center;
+  padding: 0;
+}
+
+#main aside.right .nastepny-krok-1 {
+  padding: 50px 25px 30px 25px;
+  background: #f5f6f7;
+  position: relative;
+}
+
+#main aside.right .nastepny-krok-2 {
+  padding: 50px 25px 30px 25px;
+  background: #e5e6e7;
+  position: relative;
+}
+
+#main aside.right .nastepny-krok-3 {
+  padding: 50px 25px 30px 25px;
+  background: #d9dadb;
+  position: relative;
+}
+
+#main aside.right h4 {
+  font-family: 'geomanist regular';
+  font-size: 30px;
+}
+
+#main aside.right h5 {
+  font-family: 'geomanist medium';
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+#main aside.right .nastepny-icon {
+  display: inline-block;
+  background: rgb(212, 32, 39);
+  color: #fff;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px;
+  padding-top: 8%;
+  font-size: 40px;
+  margin: 10px auto;
+}
+
+#main .umowa .col-md-8 {
+  padding: 0;
+}
+
+#main .umowa .col-md-8 p {
+  margin-top: 10px;
+}
+
+#main .pobierz-nip p {
+  margin-top: 0px;
+}
+
+#main .umowa .col-md-8 p strong {
+  color: red;
+}
+
+#main .cf7_text_shortcode.col-md-6,
+#main .col-md-12 {
+  padding-left: 0;
+}
+
+#main .wymagane-text p {
+  color: #999999;
+  margin-top: 10px;
+}
+
+#main .pp-notification-wrapper {
+  border-style: solid;
+  border-width: 0;
+  background-clip: padding-box;
+  border-color: #3ca9d1;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-top: 15px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  background-color: #cbebfb;
+  margin: 20px 0;
+}
+
+#main .pp-notification-wrapper .pp-notification-inner .pp-notification-icon {
+  margin-right: 30px;
+  float: left;
+  display: table;
+}
+
+#main .pp-notification-wrapper .pp-notification-inner .pp-notification-icon span.pp-icon {
+  color: #3ca9d1;
+  font-size: 30px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+#main .pp-notification-wrapper .pp-notification-inner .pp-notification-content p {
+  margin-bottom: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #3ca9d1;
+}
+
+#main .wpcf7-response-output {
+  border-style: solid;
+  border-width: 0;
+  background-clip: padding-box;
+  border-color: #e85656;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-top: 15px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  background-color: #f9c8c7;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e85656;
+  display: none;
+  margin: 20px 0 0 0;
+}
+
+#main .wpcf7-form input.wpcf7-submit {
+  font-size: 14px;
+  line-height: 16px;
+  width: 250px;
+  padding: 16px 32px;
+  display: inline-block;
+  text-align: center;
+  transition: color .3s ease-out, border .3s ease-out, background .3s ease-out, box-shadow .3s ease-out !important;
+  font: 400 14px/1em var(--vamtam-primary-font-font-family);
+  color: var(--vamtam-accent-color-1-hc) !important;
+  background: var(--vamtam-accent-color-1) !important;
+}
+
+#main .wpcf7-form a.multistep-cf7-next,
+#main .wpcf7-form a.multistep-cf7-first,
+#main .wpcf7-form a.multistep-cf7-prev {
+  border: none;
+  font-size: 14px;
+  transition: color .3s ease-out, border .3s ease-out, background .3s ease-out, box-shadow .3s ease-out !important;
+  font: 400 14px/1em var(--vamtam-primary-font-font-family);
+  color: var(--vamtam-accent-color-1-hc) !important;
+  background: var(--vamtam-accent-color-1) !important;
+}
+
+#main .wpcf7-form input.wpcf7-submit:hover,
+#main .wpcf7-form a.multistep-cf7-next:hover,
+#main .wpcf7-form a.multistep-cf7-first:hover,
+#main .wpcf7-form a.multistep-cf7-prev:hover {
+  border: none;
+  background: var(--vamtam-accent-color-6) !important;
+  color: var(--vamtam-accent-color-6-hc) !important;
+}
+
+#main .wpcf7-form a.multistep-cf7-first {
+  margin-right: 22px;
+}
+
+#main #get-nip-1 {
+  cursor: pointer;
+}
+
+#main .umowa .cf7-zgoda span.wpcf7-list-item {
+  margin-left: 0;
+}
+
+#main .umowa .cf7-zgoda .wpcf7-list-item-label {
+  font-weight: bold;
+}
+
+@media (max-width: 992px) {
+  #main aside.right.vamtam-body-sidebar {
+    display: none;
+  }
+}

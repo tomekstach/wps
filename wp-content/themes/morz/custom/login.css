@@ -1,0 +1,99 @@
+@font-face {
+  font-family: "geomanist regular";
+  src: url("/wp-content/uploads/fonts/geomanist-regular-webfont.eot");
+  src: url("/wp-content/uploads/fonts/geomanist-regular-webfont.woff") format("woff"), url("/wp-content/uploads/fonts/geomanist-regular-webfont.ttf") format("truetype"), url("/wp-content/uploads/fonts/geomanist-regular-webfont.svg#filename") format("svg");
+}
+
+body {
+  background-color: #fff;
+  font-family: "geomanist regular";
+}
+
+#login h1 a,
+.login h1 a {
+  background-image: url('/wp-content/uploads/sites/4/2019/02/wapro_logo.svg');
+  height: 65px;
+  width: 320px;
+  background-size: 320px 65px;
+  background-repeat: no-repeat;
+  padding-bottom: 30px;
+  font-family: "geomanist regular";
+}
+
+a:hover,
+.login #backtoblog a:hover,
+.login #nav a:hover,
+.login h1 a:hover {
+  color: #d42027;
+  text-decoration: none;
+  border-bottom: 1px solid #d42027;
+  outline: none;
+}
+
+a:focus,
+.login #backtoblog a:focus,
+.login #nav a:focus,
+.login h1 a:focus {
+  color: #d42027;
+  box-shadow: none;
+}
+
+.login form {
+  box-shadow: none;
+  border-top: 1px solid #ededed;
+  border-bottom: 1px solid #ededed;
+}
+
+.login .message {
+  box-shadow: none;
+  border-left: none;
+}
+
+.login input[type="password"],
+.login input[type="email"],
+.login input[type="text"] {
+  box-shadow: none;
+  background: #fff;
+}
+
+.login input[type="password"]:focus,
+.login input[type="password"]:hover,
+.login input[type="email"]:focus,
+.login input[type="email"]:hover,
+.login input[type="text"]:focus,
+.login input[type="text"]:hover {
+  border-color: #d42027;
+}
+
+.login .submit input[type="submit"] {
+  border-radius: 0;
+  border: none;
+  padding: 16px 30px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  vertical-align: middle;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  text-decoration: none;
+  text-shadow: none;
+  -webkit-font-smoothing: auto;
+  transition: color .3s ease-out, border .3s ease-out, background .3s ease-out, box-shadow .3s ease-out !important;
+  font-weight: 400;
+  font-family: "geomanist regular";
+  background: #d42027;
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  margin: 0;
+  box-shadow: none;
+  height: auto;
+}
+
+.login .submit input[type="submit"]:hover {
+  background: #000;
+}
