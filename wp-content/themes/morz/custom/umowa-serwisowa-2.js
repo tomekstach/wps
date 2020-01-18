@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
       $('#rodo-e-mail').val($('#input-email').val());
 
       $.ajax({
-        url: 'https://pomoc.wpdev.wapro.pl/erp-service/erp_service.php',
+        url: 'https://pomoc.wapro.pl/erp-service/erp_service.php',
         type: "GET",
         data: {
           nip: $('#input-nip').val()

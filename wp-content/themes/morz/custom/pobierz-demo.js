@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
     }
 
     $.ajax({
-      url: 'https://wpdev.wapro.pl/nip-service/checknip.php',
+      url: 'https://wapro.pl/nip-service/checknip.php',
       type: "GET",
       data: {
         nip: $('#input-nip').val()

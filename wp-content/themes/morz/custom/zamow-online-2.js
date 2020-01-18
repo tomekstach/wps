@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
       $('#rodo-e-mail').val($('#input-firma-email').val());
 
       $.ajax({
-        url: 'https://wpdev.wapro.pl/erp-service/erp_service.php',
+        url: 'https://wapro.pl/erp-service/erp_service.php',
         type: "GET",
         data: {
           nip: $('#input-nip').val()
@@ -63,7 +63,7 @@ jQuery(document).ready(function($) {
     console.log('Check nip and get nip data!');
 
     $.ajax({
-      url: 'https://wpdev.wapro.pl/nip-service/checknip.php',
+      url: 'https://wapro.pl/nip-service/checknip.php',
       type: "GET",
       data: {
         nip: $('#input-nip').val()

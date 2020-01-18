@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
     }
 
     $.ajax({
-      url: 'https://pomoc.wpdev.wapro.pl/nip-service/checknip.php',
+      url: 'https://pomoc.wapro.pl/nip-service/checknip.php',
       type: "GET",
       data: {
         nip: $('#input-nip').val()

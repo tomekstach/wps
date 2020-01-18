@@ -843,17 +843,17 @@ function after_sent_mail($cf7)
           $user = new \WP_User($user_id);
           $user->set_role('registered');
 
-          $biura_id = get_blog_id_from_url("biura.wpdev.wapro.pl");
+          $biura_id = get_blog_id_from_url("biura.wapro.pl");
           if ($biura_id) {
             add_user_to_blog($biura_id, $user_id, 'brakbiuro');
           }
 
-          $wpdev_id = get_blog_id_from_url("wpdev.wapro.pl");
+          $wpdev_id = get_blog_id_from_url("wapro.pl");
           if ($wpdev_id) {
             add_user_to_blog($wpdev_id, $user_id, 'brak');
           }
 
-          $pomoc_id = get_blog_id_from_url("pomoc.wpdev.wapro.pl");
+          $pomoc_id = get_blog_id_from_url("pomoc.wapro.pl");
           if ($pomoc_id) {
             add_user_to_blog($pomoc_id, $user_id, 'subscriber');
           }
@@ -1007,17 +1007,17 @@ function after_sent_mail($cf7)
           $user = new \WP_User($user_id);
           $user->set_role('registeredbiuro');
 
-          $dealer_id = get_blog_id_from_url("partnerzy.wpdev.wapro.pl");
+          $dealer_id = get_blog_id_from_url("partnerzy.wapro.pl");
           if ($dealer_id) {
             add_user_to_blog($dealer_id, $user_id, 'brak');
           }
 
-          $wpdev_id = get_blog_id_from_url("wpdev.wapro.pl");
+          $wpdev_id = get_blog_id_from_url("wapro.pl");
           if ($wpdev_id) {
             add_user_to_blog($wpdev_id, $user_id, 'brak');
           }
 
-          $pomoc_id = get_blog_id_from_url("pomoc.wpdev.wapro.pl");
+          $pomoc_id = get_blog_id_from_url("pomoc.wapro.pl");
           if ($pomoc_id) {
             add_user_to_blog($pomoc_id, $user_id, 'subscriber');
           }
@@ -1266,19 +1266,19 @@ function after_sent_mail($cf7)
           $user = new \WP_User($user_id);
           $user->set_role('subscriber');
 
-          $dealer_id = get_blog_id_from_url("partnerzy.wpdev.wapro.pl");
+          $dealer_id = get_blog_id_from_url("partnerzy.wapro.pl");
 
           if ($dealer_id) {
             add_user_to_blog($dealer_id, $user_id, 'brak');
           }
 
-          $wpdev_id = get_blog_id_from_url("wpdev.wapro.pl");
+          $wpdev_id = get_blog_id_from_url("wapro.pl");
 
           if ($wpdev_id) {
             add_user_to_blog($wpdev_id, $user_id, 'brak');
           }
 
-          $biuro_id = get_blog_id_from_url("biuro.wpdev.wapro.pl");
+          $biuro_id = get_blog_id_from_url("biuro.wapro.pl");
 
           if ($biuro_id) {
             add_user_to_blog($biuro_id, $user_id, 'brakbiuro');
@@ -1387,11 +1387,11 @@ function my_login_redirect($redirect_to, $request, $user)
 {
   if (isset($user->roles) && is_array($user->roles)) {
     if (in_array('registered', $user->roles)) {
-      $redirect_to =  'https://partnerzy.wpdev.wapro.pl/dziekujemy-za-rejestracje/';
+      $redirect_to =  'https://partnerzy.wapro.pl/dziekujemy-za-rejestracje/';
     }
 
     if (in_array('registeredbiuro', $user->roles)) {
-      $redirect_to =  'https://biura.wpdev.wapro.pl/dziekujemy-za-rejestracje/';
+      $redirect_to =  'https://biura.wapro.pl/dziekujemy-za-rejestracje/';
     }
   }
 
