@@ -273,7 +273,7 @@ function wp_w3all_user_session_set( $logged_in_cookie, $expire, $expiration, $us
 //if(isset($_POST['w3all_username']) && isset($_POST['w3all_password'])){
 //add_action( 'init', 'w3all_login_widget'); 
  function w3all_login_widget(){
-		global $wpdb,$w3all_anti_brute_force_yn,$w3all_bruteblock_phpbbulist,$w3cookie_domain;
+    global $wpdb,$w3all_anti_brute_force_yn,$w3all_bruteblock_phpbbulist,$w3cookie_domain;
   $wpu_db_utab = (is_multisite()) ? WPW3ALL_MAIN_DBPREFIX . 'users' : $wpdb->prefix . 'users';
   $passed_uname = sanitize_user( $_POST['w3all_username'], $strict = false );
     if ( empty($passed_uname) OR strlen($passed_uname) > 50 ){
@@ -366,7 +366,7 @@ function wp_w3all_user_session_set( $logged_in_cookie, $expire, $expiration, $us
         setcookie ("w3all_bruteblock", "", time() - 31622400, "/", "$w3cookie_domain");
     }
      unset($GLOBALS['w3all_username'],$GLOBALS['w3all_password']); // unset nothing at all
-
+    
      wp_safe_redirect( $_POST['redirect_to'] ); exit;
  }
 
@@ -732,8 +732,7 @@ function wp_check_password($password, $hash, $user_id) {
     $check = $wp_hasher->CheckPassword($password, $hash); // WP check
   }
 
-  // AstoSoft
- if ($check !== true && strlen($hash) > 32 && !isset($HArgon2i) && strlen($password) > 1){ // Wp check failed ... check that isn't an md5 at this point before to follow or get PHP Fatal error in ... addons/bcrypt/bcrypt.php:111
+ if ($check !== true && strlen($hash) > 32 && !isset($HArgon2i)){ // Wp check failed ... check that isn't an md5 at this point before to follow or get PHP Fatal error in ... addons/bcrypt/bcrypt.php:111
     require_once( WPW3ALL_PLUGIN_DIR . 'addons/bcrypt/bcrypt.php');
     $password = htmlspecialchars($password);
     $ck = new w3_Bcrypt();

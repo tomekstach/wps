@@ -78,17 +78,14 @@ private static function w3all_db_connect(){
  // check that the connection do not require specified db port
  // @mrmoh https://wordpress.org/support/users/mrmoh/
  $w3all_config["dbhost"] = empty($w3all_config["dbport"]) ? $w3all_config["dbhost"] : $w3all_config["dbhost"] . ':' . $w3all_config["dbport"];
- //print_r($w3all_config);
  $w3db_conn = new wpdb($w3all_config["dbuser"], $w3all_config["dbpasswd"], $w3all_config["dbname"], $w3all_config["dbhost"]);
   if(!empty($w3db_conn->error)){
   	if (!defined('WPW3ALL_NOT_ULINKED')){
   	  define('WPW3ALL_NOT_ULINKED', true);
-    }
-    if (in_array('page', $_GET)) {
+  	}
   	  if($_GET['page'] == 'wp-w3all-options'){
        echo __('<div class="" style="width:auto;background-color:#FFF;position:fixed;top:50;right:0;left:0;text-align:center;z-index:99999999;padding:20px"><h3 style="margin:0 10px 10px 10px"><span style="color:#FF0000;">WARNING</span></h3><strong>Error establishing a phpBB database connection.</strong><br />The w3all integration plugin will not work properly (widgets, shortcodes).<br /><span style="color:#FF0000">Integration Running as USERS NOT LINKED</span> until this message display.<br />Check db connection values into linked phpBB config.php file.</div><br />', 'wp-w3all-phpbb-integration');
       }
-    }
    }
  return $w3db_conn;
 }
@@ -1223,13 +1220,13 @@ else { 	$rankID = 0; $group_color = ''; }
       
       $wpunn = esc_sql(strtolower($wpul)); // only strtolower nicename, or will not work in phpBB user_nicename stored replaced with hypens spaces or dots (like wp do)
       $wpul  = esc_sql($wpul);
-      // phpBB 3.2.0 >
-      if($phpbb_version == '3.2'){
+      // phpBB < 3.3.0
+      if(false === strpos($phpbb_version,'3.3')){
 	         $w3phpbb_conn->query("INSERT INTO ".$w3all_config["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_email_hash, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
          VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','', '$wpur', '$wpul', '$wpunn', '$wpup', '0', '$wpue', '$user_email_hash', '', '', '', '', '', '', '0', '0', '0', '0', '0', '0', '0', '$wp_lang_x_phpbb', 'Europe/Rome', '$default_dateformat', '1', '$rankID', '$group_color', '0', '0', '0', '0', '-3', '0', '0', 't', 'd', 0, 't', 'a', '0', '1', '0', '1', '1', '1', '1', '230271', '$uavatar', '$avatype', '0', '0', '', '', '', '', '', '', '', '0', '0', '0')");
       }
       // phpBB 3.3.0 >
-      if($phpbb_version == '3.3'){
+      if(false !== strpos($phpbb_version,'3.3')){
 	       $w3phpbb_conn->query("INSERT INTO ".$w3all_config["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, reset_token, reset_token_expiration, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
          VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','','$wpur','$wpul','$wpunn','$wpup','0','$wpue','','0','0','0','index.php','','0','0','0','0','0','0','0','$wp_lang_x_phpbb','','d M Y H:i','1','0','$group_color','0','0','0','0','-3','0','0','t','d','0','t','a','0','1','0','1','1','1','1','230271','$uavatar','$avatype','50','50','','','','','','','0','','','0','0','0')");
       }
@@ -1404,7 +1401,7 @@ public static function wp_w3all_phpbb_logout() {
  	    setcookie ("$u", "", time() - 31622400, "/", true); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain", true);
  	    setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain", true); 
-       setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true); 
+      setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true); 
        // AstoSoft - End
    }
 
@@ -1508,7 +1505,7 @@ public static function phpbb_pass_update($user, $new_pass) {
   error_log('w3all_add_into_spec_group: '.$w3all_add_into_spec_group."\n");
   error_log('User roles: ' . implode(', ', $user_info->roles) . "\n");
 
-  $phpbb_group_exist = $w3phpbb_conn->get_row("SELECT user_id FROM ". $phpbb_config_file["table_prefix"] ."user_group WHERE user_id = '".$uid."' AND group_id = '".$w3all_add_into_spec_group."'"); 
+  $phpbb_group_exist = $w3phpbb_conn->get_row("SELECT user_id FROM ". $w3all_config["table_prefix"] ."user_group WHERE user_id = '".$uid."' AND group_id = '".$w3all_add_into_spec_group."'"); 
 
   if (in_array('subscriber', $user_info->roles)) {
     if ($phpbb_group_exist === null) {
@@ -1522,7 +1519,7 @@ public static function phpbb_pass_update($user, $new_pass) {
     }
   }
   // AstoSoft - End
-  
+
     // see also function phpbb_verify_credentials(
 
      $u_url = $wpu->user_url;
