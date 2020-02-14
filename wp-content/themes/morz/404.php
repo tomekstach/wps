@@ -12,7 +12,7 @@ $the_slug = str_replace('/', '', $_SERVER['REQUEST_URI']);
 $page = get_page_by_path($the_slug);
 $page_title = get_the_title($page);
 
-if ($page_title != '' && in_array('subscriber', $user->roles)) {
+if ($page_title != '' && (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles) || in_array('subscriber', $user->roles))) {
   wp_redirect(get_site_url() . '/dziekujemy-za-rejestracje/');
 } else if ($page_title != '') {
   wp_redirect(get_site_url() . '/rejestracja/');

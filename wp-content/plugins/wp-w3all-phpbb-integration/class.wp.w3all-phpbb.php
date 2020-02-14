@@ -23,11 +23,9 @@ public static function wp_w3all_phpbb_init() {
 }
 
 private static function w3all_wp_logout($redirect = ''){
-	   		global $w3all_config,$useragent,$w3all_exclude_id1;
+	   		global $w3all_config,$w3cookie_domain,$useragent,$w3all_exclude_id1;
 	  	$phpbb_config = W3PHPBBCONFIG;
 	  	$phpbb_config = unserialize($phpbb_config);
-	    $w3cookie_domain = get_option('w3all_phpbb_cookie');
-	  	
 	  	$w3phpbb_conn = self::w3all_db_connect();
 	     	
         $k   = $phpbb_config["cookie_name"].'_k';
@@ -722,7 +720,7 @@ $last_updated = date('Y-m-d H:i:s');
 
 // START w3all redirect to phpBB (user redirected onlogin by snippet added into phpBB, to add user in WP)
   // Redirect to phpBB, if redirected by 'phpBB onlogin': if snippet code in phpBB is used to redirect in WP and add the user +- at same time into WP (good for not iframe mode)
-  //if(get_option( 'w3all_iframe_phpbb_link_yn' ) == 0){ // if not in iframe mode
+
      if(isset($_GET["w3allAU"])){
        $uw = base64_decode(trim($_GET["w3allAU"]));
       	header("Location: $uw"); /* Redirect to phpBB a coming 'onlogin' for addition */
@@ -948,7 +946,7 @@ AND ".$w3all_config["table_prefix"]."acl_groups.group_id = ".$ug."
 
 
 private static function phpBB_user_session_set($wp_user_data){
-	      global $w3all_config,$wpdb,$useragent,$w3all_anti_brute_force_yn,$w3all_bruteblock_phpbbulist,$w3all_exclude_id1;
+	      global $w3all_config,$wpdb,$useragent,$w3all_anti_brute_force_yn,$w3all_bruteblock_phpbbulist,$w3all_exclude_id1,$w3cookie_domain;
 
       if(!defined("W3PHPBBCONFIG")){
        	$phpbb_config = self::w3all_get_phpbb_config();
@@ -957,8 +955,7 @@ private static function phpBB_user_session_set($wp_user_data){
 	     }
 	     
        $w3phpbb_conn = self::w3all_db_connect();
-       $w3cookie_domain = get_option('w3all_phpbb_cookie');
-      	
+ 
         $k   = $phpbb_config["cookie_name"].'_k';
         $sid = $phpbb_config["cookie_name"].'_sid';
         $u   = $phpbb_config["cookie_name"].'_u';
@@ -1209,7 +1206,8 @@ else { 	$rankID = 0; $group_color = ''; }
         	$phpbb_user_type = 0;
         }      
         
-      $wpu->user_registered = time($wpu->user_registered); // as phpBB do
+      // AstoSoft
+      $wpu->user_registered = strtotime($wpu->user_registered); // as phpBB do
 	    $user_email_hash = self::w3all_phpbb_email_hash($wpu->user_email);
 	     
       //$wpur = $wpu->user_registered;
@@ -1220,13 +1218,13 @@ else { 	$rankID = 0; $group_color = ''; }
       
       $wpunn = esc_sql(strtolower($wpul)); // only strtolower nicename, or will not work in phpBB user_nicename stored replaced with hypens spaces or dots (like wp do)
       $wpul  = esc_sql($wpul);
-      // phpBB < 3.3.0
-      if(false === strpos($phpbb_version,'3.3')){
+      // phpBB 3.2.0 >
+      if($phpbb_version == '3.2'){
 	         $w3phpbb_conn->query("INSERT INTO ".$w3all_config["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_email_hash, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
          VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','', '$wpur', '$wpul', '$wpunn', '$wpup', '0', '$wpue', '$user_email_hash', '', '', '', '', '', '', '0', '0', '0', '0', '0', '0', '0', '$wp_lang_x_phpbb', 'Europe/Rome', '$default_dateformat', '1', '$rankID', '$group_color', '0', '0', '0', '0', '-3', '0', '0', 't', 'd', 0, 't', 'a', '0', '1', '0', '1', '1', '1', '1', '230271', '$uavatar', '$avatype', '0', '0', '', '', '', '', '', '', '', '0', '0', '0')");
       }
       // phpBB 3.3.0 >
-      if(false !== strpos($phpbb_version,'3.3')){
+      if($phpbb_version == '3.3'){
 	       $w3phpbb_conn->query("INSERT INTO ".$w3all_config["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, reset_token, reset_token_expiration, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
          VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','','$wpur','$wpul','$wpunn','$wpup','0','$wpue','','0','0','0','index.php','','0','0','0','0','0','0','0','$wp_lang_x_phpbb','','d M Y H:i','1','0','$group_color','0','0','0','0','-3','0','0','t','d','0','t','a','0','1','0','1','1','1','1','230271','$uavatar','$avatype','50','50','','','','','','','0','','','0','0','0')");
       }
@@ -1389,8 +1387,8 @@ public static function wp_w3all_phpbb_logout() {
     $w3phpbb_conn->query("DELETE FROM ".$w3all_config["table_prefix"]."sessions_keys WHERE key_id = '$k_md5' AND user_id = '$u_id'");
   
    // remove phpBB cookies
-   // AstoSoft - Start
-      setcookie ("$k", "", time() - 31622400, "/");
+   // AstoSoft - Start 
+      /*setcookie ("$k", "", time() - 31622400, "/");
  	    setcookie ("$sid", "", time() - 31622400, "/"); 
  	    setcookie ("$u", "", time() - 31622400, "/"); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain");
@@ -1401,7 +1399,7 @@ public static function wp_w3all_phpbb_logout() {
  	    setcookie ("$u", "", time() - 31622400, "/", true); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain", true);
  	    setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain", true); 
-      setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true); 
+      setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true); */
        // AstoSoft - End
    }
 
@@ -1519,7 +1517,7 @@ public static function phpbb_pass_update($user, $new_pass) {
     }
   }
   // AstoSoft - End
-
+  
     // see also function phpbb_verify_credentials(
 
      $u_url = $wpu->user_url;
@@ -1944,7 +1942,7 @@ public static function wp_w3all_custom_iframe_short( $atts ){
 
 // w3allphpbbupm // wp_w3all_phpBB_u_pm_short vers 1.0 x phpBB PM
 public static function wp_w3all_phpbb_upm_short( $atts ) {
- global $w3all_custom_output_files, $phpbb_on_template_iframe, $wp_w3all_forum_folder_wp, $w3all_url_to_cms;
+ global $w3all_custom_output_files, $w3all_iframe_phpbb_link_yn, $wp_w3all_forum_folder_wp, $w3all_url_to_cms;
  //obsolete $wp_w3all_forum_folder_wp
  //since on v3 and v4 iframe code, links can also points to real phpBB urls (overall_header code)
  
@@ -1959,9 +1957,10 @@ if ( defined("W3PHPBBUSESSION") ) {
     'w3pm_href_blank' => ''
    ), $atts );
 
- $w3pm_href = $w3all_custom_output_files == 1 ? get_home_url() . "/index.php/".$wp_w3all_forum_folder_wp.'/?i=pm&amp;folder=inbox">' : $w3all_url_to_cms.'/ucp.php?i=pm&amp;folder=inbox';
  $w3pm_inline_style = empty($args['w3pm_inline_style']) ? '' : ' style="'.$args['w3pm_inline_style'].'"';
  $w3pm_href_blank = ($args['w3pm_href_blank'] > 0) ? ' target="_blank"' : '';
+ $w3pm_href = $w3all_iframe_phpbb_link_yn == 1 ? get_home_url() . '/index.php/'.$wp_w3all_forum_folder_wp.'/?i=pm&amp;folder=inbox' : $w3all_url_to_cms.'/ucp.php?i=pm&amp;folder=inbox';
+ 
  $w3pm_class = $args['w3pm_class'];
  $w3pm_id = $args['w3pm_id'];
                 
@@ -2113,8 +2112,7 @@ $phpbb_conf = '';
 
 // wp_w3all_get_phpbb_lastopics_short vers 1.0 x single or specifics multiple forums
 public static function wp_w3all_phpbb_last_topics_single_multi_fp_short( $atts ) {
-	global $w3all_config,$w3all_get_topics_x_ugroup,$w3all_lasttopic_avatar_num,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn;
-	$w3all_url_to_cms = get_option( 'w3all_url_to_cms' );
+	global $w3all_config,$w3all_url_to_cms,$w3all_get_topics_x_ugroup,$w3all_lasttopic_avatar_num,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn,$w3all_iframe_phpbb_link_yn,$wp_w3all_forum_folder_wp;
  
  if(is_array($atts)){
 	$atts = array_map ('trim', $atts);
@@ -2218,8 +2216,8 @@ if($w3all_get_topics_x_ugroup == 1){ // list of allowed forums to retrieve topic
 
 // wp_w3all_get_phpbb_lastopics_short vers 1.0
 public static function wp_w3all_get_phpbb_lastopics_short( $atts ) {
-	global $w3all_lasttopic_avatar_num,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn;
-	$w3all_url_to_cms = get_option( 'w3all_url_to_cms' );
+	global $w3all_lasttopic_avatar_num,$w3all_url_to_cms,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn,$wp_w3all_forum_folder_wp,$w3all_iframe_phpbb_link_yn;
+
   if(is_array($atts)){
 	$atts = array_map ('trim', $atts);
 } else {
@@ -2276,10 +2274,9 @@ public static function wp_w3all_get_phpbb_lastopics_short( $atts ) {
 // NOTE: as is the query the result will contain only topics with almost an attach inside on one of their posts:
 // only the first (time based) inserted, will be retrieved to display
 public static function wp_w3all_get_phpbb_lastopics_short_wi( $atts ) {
-	global $w3all_config,$wp_w3all_forum_folder_wp,$w3all_lasttopic_avatar_num,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn,$w3all_get_topics_x_ugroup;
+	global $w3all_config,$w3all_url_to_cms,$wp_w3all_forum_folder_wp,$w3all_lasttopic_avatar_num,$w3all_last_t_avatar_yn,$w3all_last_t_avatar_dim,$w3all_get_phpbb_avatar_yn,$w3all_phpbb_widget_mark_ru_yn,$w3all_custom_output_files,$w3all_phpbb_widget_FA_mark_yn,$w3all_get_topics_x_ugroup,$w3all_iframe_phpbb_link_yn;
 	 $phpbb_config = unserialize(W3PHPBBCONFIG);
    $w3db_conn = self::w3all_db_connect();
-	 $w3all_url_to_cms = get_option( 'w3all_url_to_cms' );
    $atts = array_map ('trim', $atts);
    
     $ltm = shortcode_atts( array(
@@ -2605,7 +2602,7 @@ $query_un ='';
 
 
 public static function w3all_get_phpbb_avatars_url( $w3unames ) {
-   global $w3all_config, $w3all_avatar_via_phpbb_file;
+   global $w3all_config, $w3all_avatar_via_phpbb_file,$w3all_url_to_cms;
   $w3db_conn = self::w3all_db_connect();
 	$phpbb_config = unserialize(W3PHPBBCONFIG);
   $uavatars = $w3db_conn->get_results( "SELECT user_id, username, user_avatar, user_avatar_type FROM ".$w3all_config["table_prefix"]."users WHERE user_email IN(".$w3unames.") ORDER BY user_id DESC" );
@@ -2618,7 +2615,7 @@ public static function w3all_get_phpbb_avatars_url( $w3unames ) {
      	
      		if ( $user_ava->user_avatar_type == 'avatar.driver.local' ){
      			
-     			$phpbb_avatar_url = get_option( 'w3all_url_to_cms' ) . '/' . $phpbb_config["avatar_gallery_path"] . '/' . $user_ava->user_avatar;
+     			$phpbb_avatar_url = $w3all_url_to_cms . '/' . $phpbb_config["avatar_gallery_path"] . '/' . $user_ava->user_avatar;
      			$u_a[] = array("puid" => $user_ava->user_id, "uname" => $user_ava->username, "uavaurl" => $phpbb_avatar_url);
      		
      		}  elseif ( $user_ava->user_avatar_type == 'avatar.driver.remote' ){
@@ -2632,9 +2629,9 @@ public static function w3all_get_phpbb_avatars_url( $w3unames ) {
            $avatar_entry = strtok($avatar_entry, '_');
            $phpbb_avatar_filename = $phpbb_config["avatar_salt"] . '_' . $avatar_entry . '.' . $ext; 
            if ( $w3all_avatar_via_phpbb_file == 0 ){ // by @Alexvrs
-             $phpbb_avatar_url = get_option( 'w3all_url_to_cms' ).'/'.$phpbb_config["avatar_path"].'/'.$phpbb_avatar_filename;
+             $phpbb_avatar_url = $w3all_url_to_cms .'/'.$phpbb_config["avatar_path"].'/'.$phpbb_avatar_filename;
             } else { 
-          	 $phpbb_avatar_url = get_option( 'w3all_url_to_cms' ) . "/download/file.php?avatar=" . $avatar_entry . '.' . $ext;
+          	 $phpbb_avatar_url = $w3all_url_to_cms . "/download/file.php?avatar=" . $avatar_entry . '.' . $ext;
     	     }
     	// in phpBB there is Gravatar as option available as profile image
     	// so if it is the case, the user at this point can have an email address, instead than an image url as value

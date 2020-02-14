@@ -16,6 +16,7 @@ jQuery(document).ready(function($) {
           $('#none-form').css('display', 'block');
           $('#form-biuro').css('display', 'none');
         } else {
+          //console.log("user-exist: " + data.id);
           $('#user-exist').val(data.id);
           $('#password-field').val(data.name);
           $('#your-login-admin').val(data.name);

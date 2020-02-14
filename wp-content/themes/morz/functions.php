@@ -58,6 +58,8 @@ if ( class_exists( 'Vamtam_Importers' ) && is_callable( array( 'Vamtam_Importers
 }
 
 // AstoSoft - start
+add_post_type_support( 'page', 'excerpt' );
+
 function post_title_shortcode()
 {
   return get_the_title();
@@ -636,7 +638,7 @@ function custom_archive_text_validation_filter($result, $tag)
   }
 
   if ($tag->name == 'your-login-admin') {
-    if (username_exists($_POST['your-login-admin']) && !array_key_exists('exist-user', $_POST)) {
+    if (username_exists($_POST['your-login-admin']) && !array_key_exists('user-exist', $_POST)) {
       $user   = get_user_by('login', $_POST['your-login-admin']);
       $roles  = (array) $user->roles;
       if (in_array('subscriber', $roles) || in_array('registered', $roles)) {
@@ -691,7 +693,7 @@ add_filter('wpcf7_validate_email*', 'custom_archive_email_validation_filter', 20
 function custom_archive_email_validation_filter($result, $tag)
 {
   if ($tag->name == 'email-admin') {
-    if (email_exists($_POST['email-admin']) && !array_key_exists('exist-user', $_POST)) {
+    if (email_exists($_POST['email-admin']) && !array_key_exists('user-exist', $_POST)) {
       $user   = get_user_by('email', $_POST['email-admin']);
       $roles  = (array) $user->roles;
       if (in_array('subscriber', $roles) || in_array('registered', $roles)) {
@@ -739,7 +741,7 @@ add_filter('wpcf7_validate_password*', 'custom_archive_password_validation_filte
 function custom_archive_password_validation_filter($result, $tag)
 {
   if ($tag->name == 'password') {
-    if (strlen($_POST['password']) < 8 && !array_key_exists('exist-user', $_POST)) {
+    if (strlen($_POST['password']) < 8 && !array_key_exists('user-exist', $_POST)) {
       $result->invalidate($tag, "Hasło musi mieć minimum 8 znaków.");
     }
   }
@@ -825,7 +827,7 @@ function after_sent_mail($cf7)
     // Register dealer form
     if ($data['_wpcf7'] == '45267') {
 
-      if (!array_key_exists('exist-user', $data)) {
+      if (!array_key_exists('user-exist', $data)) {
         // Adding user
         $user_id = username_exists($data['your-login-admin']);
 
@@ -859,7 +861,7 @@ function after_sent_mail($cf7)
           $user->set_role('registered');
         }
       } else {
-        $user_id = intval($data['exist-user']);
+        $user_id = intval($data['user-exist']);
         $user = new \WP_User($user_id);
         $user->set_role('registered');
       }
@@ -870,7 +872,7 @@ function after_sent_mail($cf7)
 
       // Adding dealer localization
       // Add Post with dealer localization
-      $post_id = 45129;
+      $post_id = 46627;
       $post = get_post($post_id);
 
       if (isset($post) && $post != null) {
@@ -989,7 +991,7 @@ function after_sent_mail($cf7)
     // Register biuro form
     if ($data['_wpcf7'] == '46621') {
 
-      if (!array_key_exists('exist-user', $data)) {
+      if (!array_key_exists('user-exist', $data)) {
         // Adding user
         $user_id = username_exists($data['your-login-admin']);
 
@@ -1023,14 +1025,14 @@ function after_sent_mail($cf7)
           $user->set_role('registeredbiuro');
         }
       } else {
-        $user_id = intval($data['exist-user']);
+        $user_id = intval($data['user-exist']);
         $user = new \WP_User($user_id);
         $user->set_role('registeredbiuro');
       }
 
-      // Adding dealer localization
-      // Add Post with dealer localization
-      $post_id = 45990;
+      // Adding biuro localization
+      // Add Post with biuro localization
+      $post_id = 47508;
       $post = get_post($post_id);
 
       if (isset($post) && $post != null) {
@@ -1247,7 +1249,7 @@ function after_sent_mail($cf7)
     // Register dealer form
     if ($data['_wpcf7'] == '47120') {
 
-      if (!array_key_exists('exist-user', $data)) {
+      if (!array_key_exists('user-exist', $data)) {
         // Adding user
         $user_id = username_exists($data['your-login-admin']);
 
@@ -1291,7 +1293,7 @@ function after_sent_mail($cf7)
           }
         }
       } else {
-        $user_id = intval($data['exist-user']);
+        $user_id = intval($data['user-exist']);
         $user = new \WP_User($user_id);
         $roles = (array) $user->roles;
 
@@ -1432,14 +1434,16 @@ function custom_logout()
 {
   if (array_key_exists('customAction', $_GET)) {
     if ($_GET['customAction'] == 'logout') {
-      //wp_destroy_current_session();
-      //wp_clear_auth_cookie();
-      wp_logout();
+      wp_destroy_current_session();
+      wp_clear_auth_cookie();
+      wp_set_current_user( 0 );
+      do_action( 'wp_logout' );
+      //wp_logout();
 
       if (array_key_exists('redirect_to', $_POST)) {
-        wp_redirect($_POST['redirect_to']);
+        wp_redirect(get_site_url() . $_POST['redirect_to']);
       } elseif (array_key_exists('redirect_to', $_GET)) {
-        wp_redirect($_GET['redirect_to']);
+        wp_redirect(get_site_url() . $_GET['redirect_to']);
       } else {
         wp_redirect(site_url());
       }
