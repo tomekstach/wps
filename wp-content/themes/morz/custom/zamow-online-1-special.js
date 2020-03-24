@@ -15,6 +15,26 @@ jQuery(document).ready(function($) {
     calculateSum();
   });
 
+  $('.checkbox-serwis-biznes input:checkbox').bind('click', function() {
+    $('.checkbox-serwis-prestiz input:checkbox').prop("checked", false);
+    calculateSum();
+  });
+
+  $('.checkbox-serwis-prestiz input:checkbox').bind('click', function() {
+    $('.checkbox-serwis-biznes input:checkbox').prop("checked", false);
+    calculateSum();
+  });
+
+  $('.checkbox-backup-podst input:checkbox').bind('click', function() {
+    $('.checkbox-backup-rozsz input:checkbox').prop("checked", false);
+    calculateSum();
+  });
+
+  $('.checkbox-backup-rozsz input:checkbox').bind('click', function() {
+    $('.checkbox-backup-podst input:checkbox').prop("checked", false);
+    calculateSum();
+  });
+
   calculateSum();
 
   function currencyFormatPL(num) {
@@ -38,6 +58,22 @@ jQuery(document).ready(function($) {
     });
 
     sum = (sum1 * 159) + (sum2 * 129);
+
+    if ($('.checkbox-serwis-biznes input').is(':checked')) {
+      sum = sum + 549;
+    }
+
+    if ($('.checkbox-serwis-prestiz input').is(':checked')) {
+      sum = sum + 699;
+    }
+
+    if ($('.checkbox-backup-podst input').is(':checked')) {
+      sum = sum + 49;
+    }
+
+    if ($('.checkbox-backup-rozsz input').is(':checked')) {
+      sum = sum + 99;
+    }
 
     $('#sum-netto').html(currencyFormatPL(sum));
     $('#abonament').val(sum);

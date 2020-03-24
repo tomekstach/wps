@@ -1388,13 +1388,13 @@ public static function wp_w3all_phpbb_logout() {
   
    // remove phpBB cookies
    // AstoSoft - Start 
-      /*setcookie ("$k", "", time() - 31622400, "/");
+      /*etcookie ("$k", "", time() - 31622400, "/");
  	    setcookie ("$sid", "", time() - 31622400, "/"); 
- 	    setcookie ("$u", "", time() - 31622400, "/"); 
- 	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain");
- 	    setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain"); 
- 	    setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain");  	
-      setcookie ("$k", "", time() - 31622400, "/", true);
+ 	    setcookie ("$u", "", time() - 31622400, "/");*/ 
+ 	    //setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain");
+ 	    //setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain"); 
+ 	    //setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain");  	
+      /*setcookie ("$k", "", time() - 31622400, "/", true);
  	    setcookie ("$sid", "", time() - 31622400, "/", true); 
  	    setcookie ("$u", "", time() - 31622400, "/", true); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain", true);

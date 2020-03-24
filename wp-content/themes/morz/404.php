@@ -10,12 +10,21 @@ $user = wp_get_current_user();
 
 $the_slug = str_replace('/', '', $_SERVER['REQUEST_URI']);
 $page = get_page_by_path($the_slug);
-$page_title = get_the_title($page);
 
-if ($page_title != '' && (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles) || in_array('subscriber', $user->roles))) {
+if (is_object($page)) {
+  $page_title = get_the_title($page);
+  $post_status = $page->post_status;
+} else {
+  $page_title   = false;
+  $post_status  = false;
+}
+
+if ($page_title !== false && $post_status == 'private' && (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles) || in_array('subscriber', $user->roles))) {
   wp_redirect(get_site_url() . '/dziekujemy-za-rejestracje/');
-} else if ($page_title != '') {
+} else if ($page_title !== false && $post_status == 'private' && $user->ID > 0) {
   wp_redirect(get_site_url() . '/rejestracja/');
+} else if ($page_title !== false && $post_status == 'private' && $user->ID == 0) {
+  wp_redirect(get_site_url() . '/logowanie/');
 }
 // AstoSoft - end
 get_header();

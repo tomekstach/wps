@@ -16,6 +16,8 @@ jQuery(document).ready(function($) {
     $('.cf7-steps-4').prepend('<span class="fl-icon-wrap"><span class="fl-icon"><i class="ssui-icon ssui-icon--Zasb-293"></i><br></span></span>');
   }*/
 
+  $('#input-nazwa-firmy').prop('readonly', true);
+
   $.ajax({
     type: "POST",
     url: "/wp-json/wl/v1/user",
@@ -36,7 +38,7 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('#get-nip-1').click(function(e) {
+  $('#get-nip-service-1').click(function(e) {
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
       $('.numbernip .wpcf7-not-valid-tip').remove();
       $('.numbernip').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
@@ -46,21 +48,25 @@ jQuery(document).ready(function($) {
     }
 
     $.ajax({
-      url: 'https://pomoc.wapro.pl/nip-service/checknip.php',
+      url: 'https://pomoc.wapro.pl/erp-service/erp_service.php',
       type: "GET",
       data: {
-        nip: $('#input-nip').val()
+        nip: $('#input-nip').val(),
+        check: 1
       }
     }).done(function(string) {
       var obj = JSON.parse(string);
-      if (obj.code == 200) {
-        $('#input-nazwa-firmy').val(obj.content.name);
-        //$('#input-imie').val(obj.content.firstname);
-        //$('#input-nazwisko').val(obj.content.lastname);
+      if (obj.code == 200 && obj.content.ArrayCustomerGetResult.Status == 1) {
+        $('#input-nazwa-firmy').val(obj.content.ArrayCustomerGetResult.CustomerGetResult.Nazwa1);
+        //$('#input-imie').val(obj.content.Nazwa1);
+        //$('#input-nazwisko').val(obj.content.Nazwa2);
         $('.numbernip .wpcf7-not-valid-tip').remove();
         $('.textfirma .wpcf7-not-valid-tip').remove();
         //$('.imie .wpcf7-not-valid-tip').remove();
         //$('.nazwisko .wpcf7-not-valid-tip').remove();
+      } else if (obj.content.ArrayCustomerGetResult.Status != 1) {
+        $('.numbernip .wpcf7-not-valid-tip').remove();
+        $('.numbernip').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content.ArrayCustomerGetResult.ErrorMessage + '</span>');
       } else {
         $('.numbernip .wpcf7-not-valid-tip').remove();
         $('.numbernip').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');

@@ -52,13 +52,13 @@ jQuery(document).ready(function($) {
         $('#input-miasto').val(obj.content.city);
         $('#input-adres').val(obj.content.address);
         $('#input-kod-pocztowy').val(obj.content.postCode);
-        $('#select-wojewodztwo option[value="' + obj.content.state.toLowerCase() + '"]').prop('selected', true);
+        $('#select-wojewodztwo-biuro option[value="' + obj.content.state.toLowerCase() + '"]').prop('selected', true);
         $('.your-nip-register .wpcf7-not-valid-tip').remove();
         $('.your-company .wpcf7-not-valid-tip').remove();
         $('.your-adres .wpcf7-not-valid-tip').remove();
         $('.your-code .wpcf7-not-valid-tip').remove();
         $('.your-city .wpcf7-not-valid-tip').remove();
-        $('.wojewodztwo .wpcf7-not-valid-tip').remove();
+        $('.wojewodztwo-biuro .wpcf7-not-valid-tip').remove();
       } else {
         $('.your-nip-register .wpcf7-not-valid-tip').remove();
         $('.your-nip-register').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');

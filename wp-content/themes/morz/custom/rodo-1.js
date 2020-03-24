@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
 
   $('.multistep-cf7-next').click(function(e) {
 
-    /*if ($('#input-nip').val() != '') {
+    if ($('#input-nip').val() != '') {
       console.log('Check RODO contract!');
 
       $('#rodo-name').val($('#input-firma-imie').val() + ' ' + $('#input-firma-nazwisko').val());
@@ -62,48 +62,103 @@ jQuery(document).ready(function($) {
           }
         }
       });
-    }*/
+    }
   });
 
-  $('#get-nip-online').click(function(e) {
-    if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
-      $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
-      $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
+  $('#get-nip-klienta').click(function(e) {
+    if (!ValidateNip($('#input-nip-klienta').val(), '#input-nip-klienta')) {
+      $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
+      $('.wpcf7-form-control-wrap.nip-klienta').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
       return false;
     } else {
-      $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
+      $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
     }
 
-    console.log('Check nip and get nip data!');
+    console.log('Check nip and get nip data 2!');
+
+    $.ajax({
+      url: 'https://wapro.pl/erp-service/erp_service.php',
+      type: "GET",
+      data: {
+        nip: $('#input-nip-klienta').val(),
+        check: 5
+      }
+    }).done(function(string) {
+      var obj = JSON.parse(string);
+      console.log(obj);
+      if (obj.code == 200) {
+        if (obj.content.ArrayCustomerGetResult.Status == 1) {
+          if (obj.content.ArrayCustomerGetResult.CustomerGetResult.Nazwa2) {
+            console.log('2');
+            $('#input-nazwa-firmy-klienta').val(obj.content.ArrayCustomerGetResult.CustomerGetResult.Nazwa2);
+          } else {
+            console.log('1');
+            $('#input-nazwa-firmy-klienta').val(obj.content.ArrayCustomerGetResult.CustomerGetResult.Nazwa1);
+          }
+
+          var message = '<h5>Klient istnieje w ERPie</h5>';
+
+          if (obj.responseAgreement.ArrayDPAgreementGetResult.Status == 1) {
+            if (Array.isArray(obj.responseAgreement.ArrayDPAgreementGetResult.DPAgreementGetResult)) {
+              var DPAgreementGetResult = obj.responseAgreement.ArrayDPAgreementGetResult.DPAgreementGetResult[obj.responseAgreement.ArrayDPAgreementGetResult.DPAgreementGetResult.length - 1]
+            } else {
+              var DPAgreementGetResult = obj.responseAgreement.ArrayDPAgreementGetResult.DPAgreementGetResult;
+            }
+
+            message += '<p>Klient ma podpisaną umowę RODO (' + DPAgreementGetResult.DataPodpisania.replace('T', ' ') + ') na:</p><ul>';
+            if (DPAgreementGetResult.Hosting == 1) {
+              message += '<li>Hosting</li>';
+            }
+            if (DPAgreementGetResult.UruchTestProg == 1) {
+              message += '<li>Uruchomienie lub testowanie programu na danych rzeczywistych</li>';
+            }
+            if (DPAgreementGetResult.Outsourcing == 1) {
+              message += '<li>Outsourcing</li>';
+            }
+            if (DPAgreementGetResult.Konserwacja == 1) {
+              message += '<li>Konserwacja</li>';
+            }
+
+            message += '</ul>';
+          } else {
+            message += '<h5>Klient NIE MA podpisanej żadnej umowy RODO</k5>';
+          }
+
+          $('#klient-info').html(message);
+          $('#klient-info').show();
+        } else {
+          var message = '<h5>Klient nie istnieje w ERPie</h5>';
+          $('#klient-info').html(message);
+          $('#klient-info').show();
+          $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
+          $('.wpcf7-form-control-wrap.nip-klienta').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content.ArrayCustomerGetResult.ErrorMessage + '</span>');
+        }
+      } else {
+        $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
+        $('.wpcf7-form-control-wrap.nip-klienta').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');
+      }
+    });
 
     $.ajax({
       url: 'https://wapro.pl/nip-service/checknip.php',
-      // url: 'https://wapro.pl/erp-service/erp_service.php',
       type: "GET",
       data: {
-        nip: $('#input-nip').val(),
-        check: 1
+        nip: $('#input-nip-klienta').val()
       }
     }).done(function(string) {
       var obj = JSON.parse(string);
 
       if (obj.code == 200) {
-        $('#input-nazwa-firmy-online').val(obj.content.name);
         $('#input-firma-miasto').val(obj.content.city);
         $('#input-firma-kod-pocztowy').val(obj.content.postCode);
         $('#input-firma-ulica').val(obj.content.address);
-        $('#input-firma-imie').val(obj.content.firstname);
-        $('#input-firma-nazwisko').val(obj.content.lastname);
-        $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
-        $('.firma .wpcf7-not-valid-tip').remove();
+        $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
         $('.firma-miasto .wpcf7-not-valid-tip').remove();
         $('.firma-kod-pocztowy .wpcf7-not-valid-tip').remove();
         $('.firma-ulica .wpcf7-not-valid-tip').remove();
-        $('.firma-imie .wpcf7-not-valid-tip').remove();
-        $('.firma-nazwisko .wpcf7-not-valid-tip').remove();
       } else {
-        $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
-        $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');
+        $('.wpcf7-form-control-wrap.nip-klienta .wpcf7-not-valid-tip').remove();
+        $('.wpcf7-form-control-wrap.nip-klienta').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');
       }
     });
   });

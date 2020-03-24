@@ -36,7 +36,7 @@ if (!$account) {
 
   if ($all) {
     $data = new \stdClass;
-    $data->name     = $all->name;
+    $data->name     = addslashes($all->name);
     $data->address  = $all->street;
 
     if (empty($data->address)) {
@@ -67,15 +67,7 @@ if (!$account) {
   }
 }
 
-/*$url    = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-//$url    = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
-
-$client = new SoapClient($url, array("trace" => 1, "exception" => 0));
-
-$params   = array('ArrayDPAgreementGetData' => array('DPAgreementGetData' => array('NIPSameCyfry' => $nip)));
-$json->DPAgreementGetData = $client->DPAgreementGet($params);*/
-
-$out = html_entity_decode(stripslashes(json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)));
+$out = html_entity_decode(json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 header('Content-Type: application/json');
 header('Content-type: text/html; charset=UTF-8');

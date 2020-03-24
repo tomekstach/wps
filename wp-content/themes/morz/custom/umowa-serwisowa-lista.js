@@ -20,7 +20,6 @@ jQuery(document).ready(function($) {
             buttonText = 'Dokończ';
           }
           html += '<tr class="pp-table-row odd">';
-          html += '<td><div style="text-align: left;">nr ' + data[i].id + '</div></td>';
           html += '<td><h6>NIP: ' + data[i].NIP + '</h6><p>' + data[i].nazwa_firmy_klienta + '</p></td>';
           html += '<td><h6>' + data[i].first_name + ' ' + data[i].last_name + '</h6><p>' + data[i].tel_klienta + '<br/>' + data[i].e_mail_klienta + '</p></td>';
           html += '<td>' + data[i].data_zgloszenia + '</td>';

@@ -8,8 +8,8 @@ jQuery(document).ready(function($) {
       $('#NIPzlecajacej').val($('#input-nip').val());
       $('#zleceniodawca').val($('#input-nazwa-firmy').val());
       $('#emailzleceniodawcy').val($('#input-email').val());
-      $('#first_name').val($('#input-imie').val());
-      $('#last_name').val($('#input-nazwisko').val());
+      $('#first_name').val($('#input-imie-klient').val());
+      $('#last_name').val($('#input-nazwisko-klient').val());
       $('#user_tel').val($('#input-tel').val());
       $('#NIPzlecajacej').prop('readonly', true);
       $('#zleceniodawca').prop('readonly', true);
