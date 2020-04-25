@@ -26,10 +26,10 @@ FLBuilder::register_module( 'VamtamRevslider', array(
 				'title'  => __( 'Main', 'vamtam-elements-b' ),
 				'fields' => array(
 					'alias' => array(
-						'label'   => esc_html__( 'Slider', 'wpv' ),
-						'default' => '',
-						'type'    => 'select',
-						'options' => class_exists( 'VamtamTemplates' ) ? VamtamTemplates::get_rev_sliders( '' ) : array(),
+						'label'       => esc_html__( 'Slider', 'wpv' ),
+						'default'     => '',
+						'type'        => 'select',
+						'options'     => class_exists( 'VamtamTemplates' ) ? VamtamTemplates::get_rev_sliders( '' ) : array(),
 					),
 				),
 			),

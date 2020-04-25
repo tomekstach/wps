@@ -20,51 +20,69 @@ $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
 $nip = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_GET['nip'])));
 $nip_eu = 'PL' . $nip;
 
-// Sprawdzenie stanu konta
-$account = $nip24->getAccountStatus();
+$badNIPs = ['9970152873'];
 
-$json = new \stdClass;
-$json->code = 200;
-$json->content = 'OK';
+if (!in_array($nip, $badNIPs)) {
 
-if (!$account) {
-  $json->code = 403;
-  $json->content = $nip24->getLastError();
-} else {
-  // Wywołanie metody zwracającej szczegółowe dane firmy
-  $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+  // Sprawdzenie stanu konta
+  $account = $nip24->getAccountStatus();
 
-  if ($all) {
-    $data = new \stdClass;
-    $data->name     = addslashes($all->name);
-    $data->address  = $all->street;
+  $json = new \stdClass;
+  $json->code = 200;
+  $json->content = 'OK';
 
-    if (empty($data->address)) {
-      $data->address = $all->city;
-    }
-
-    $data->address .= ' ' . $all->streetNumber;
-
-    if (!empty($all->houseNumber)) {
-      $data->address .= '/' . $all->houseNumber;
-    }
-
-    $data->city       = $all->postCity;
-    if ($all->postCode) {
-      $data->postCode   = substr($all->postCode, 0, 2) . '-' . substr($all->postCode, -3);
-    } else {
-      $data->postCode = '';
-    }
-    $data->firstname  = $all->firstname;
-    $data->lastname   = $all->lastname;
-    $data->state      = $all->state;
-
-    $json->code = 200;
-    $json->content = $data;
-  } else {
+  if (!$account) {
     $json->code = 403;
     $json->content = $nip24->getLastError();
+  } else {
+    // Wywołanie metody zwracającej szczegółowe dane firmy
+    $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+
+    if ($all) {
+      $data = new \stdClass;
+      $data->name     = addslashes($all->name);
+      $data->address  = $all->street;
+
+      if (empty($data->address)) {
+        $data->address = $all->city;
+      }
+
+      $data->address .= ' ' . $all->streetNumber;
+
+      if (!empty($all->houseNumber)) {
+        $data->address .= '/' . $all->houseNumber;
+      }
+
+      $data->city       = $all->postCity;
+      if ($all->postCode) {
+        $data->postCode   = substr($all->postCode, 0, 2) . '-' . substr($all->postCode, -3);
+      } else {
+        $data->postCode = '';
+      }
+      $data->firstname  = $all->firstname;
+      $data->lastname   = $all->lastname;
+      $data->state      = $all->state;
+
+      $json->code = 200;
+      $json->content = $data;
+    } else {
+      $json->code = 403;
+      $json->content = $nip24->getLastError();
+    }
   }
+} else {
+  $json = new \stdClass;
+  $json->code = 200;
+
+  $data = new \stdClass;
+  $data->name       = '';
+  $data->address    = '';
+  $data->postCode   = '';
+  $data->firstname  = '';
+  $data->lastname   = '';
+  $data->state      = '';
+
+  $json->content = $data;
 }
 
 $out = html_entity_decode(json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));

@@ -58,6 +58,8 @@ if ( class_exists( 'Vamtam_Importers' ) && is_callable( array( 'Vamtam_Importers
 }
 
 // AstoSoft - start
+$badNIPs = ['9970152873'];
+
 add_post_type_support( 'page', 'excerpt' );
 
 function post_title_shortcode()
@@ -217,6 +219,7 @@ add_action('init', 'post_dl_table_init');
 
 function excerpt_br_shortcode()
 {
+  switch_to_blog(4);
   $content  = '[acf field="br_adres"]<br/>
 	[acf field="br_kod_pocztowy"] [acf field="br_miasto"]<br/>
 	województwo [acf field="br_wojewodztwo"]<br/>';
@@ -248,6 +251,7 @@ function excerpt_br_shortcode()
     }
     $html .= '<a href="' . $www . '" target="_blank" rel="noopener noreferrer">strona www</a>';
   }
+  restore_current_blog();
 
   return $html;
 }
@@ -263,6 +267,7 @@ add_shortcode('map_address_br', 'map_address_br_shortcode');
 
 function excerpt_dl_shortcode()
 {
+  switch_to_blog(3);
   $badges    = [
     ['title' => 'dystrybutor', 'url' => '/wp-content/uploads/2019/07/DYS-1.png'],
     ['title' => 'autoryzowany serwis wapro B2C', 'url' => '/wp-content/uploads/2019/07/ASA-1.png'],
@@ -321,6 +326,7 @@ function excerpt_dl_shortcode()
       $html .= '<div style="width:60%;padding-top:5px"><img src="' . $badge['url'] . '" alt="' . $badge['title'] . '" height="30px" border="0" align="middle" /></div>';
     }
   }
+  restore_current_blog();
 
   return $html;
 }
@@ -673,27 +679,31 @@ add_filter('wpcf7_validate_text*', 'custom_archive_text_validation_filter', 20, 
 function custom_archive_text_validation_filter($result, $tag)
 {
   if ($tag->name == 'your-nip-register' or $tag->name == 'NIP' or $tag->name == 'yl-nip' or $tag->name == 'numbernip') {
-    require_once 'custom/NIP24/NIP24Client.php';
 
-    \NIP24\NIP24Client::registerAutoloader();
-
-    $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
-
+    global $badNIPs;
     //$nip = '7171642051';
     $nip = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_POST[$tag->name])));
     $nip_eu = 'PL' . $nip;
 
-    // Sprawdzenie stanu konta
-    $account = $nip24->getAccountStatus();
+    if (!in_array($nip, $badNIPs)) {
+      require_once 'custom/NIP24/NIP24Client.php';
 
-    if (!$account) {
-      $result->invalidate($tag, $nip24->getLastError());
-    } else {
-      // Wywołanie metody zwracającej szczegółowe dane firmy
-      $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+      \NIP24\NIP24Client::registerAutoloader();
 
-      if (!$all) {
+      $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
+
+      // Sprawdzenie stanu konta
+      $account = $nip24->getAccountStatus();
+
+      if (!$account) {
         $result->invalidate($tag, $nip24->getLastError());
+      } else {
+        // Wywołanie metody zwracającej szczegółowe dane firmy
+        $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+
+        if (!$all) {
+          $result->invalidate($tag, $nip24->getLastError());
+        }
       }
     }
   }
@@ -724,26 +734,32 @@ add_filter('wpcf7_validate_text', 'custom_text_validation_filter', 20, 2);
 function custom_text_validation_filter($result, $tag)
 {
   if ($tag->name == 'partner-NIP' or $tag->name == 'biuro-NIP' or $tag->name == 'numbernip') {
-    require_once 'custom/NIP24/NIP24Client.php';
 
-    \NIP24\NIP24Client::registerAutoloader();
-
-    $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
-
+    global $badNIPs;
     $nip = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_POST[$tag->name])));
     $nip_eu = 'PL' . $nip;
 
-    if (!empty($nip)) {
-      $account = $nip24->getAccountStatus();
+    if (!in_array($nip, $badNIPs)) {
+      require_once 'custom/NIP24/NIP24Client.php';
 
-      if (!$account) {
-        $result->invalidate($tag, $nip24->getLastError());
-      } else {
-        // Wywołanie metody zwracającej szczegółowe dane firmy
-        $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+      \NIP24\NIP24Client::registerAutoloader();
 
-        if (!$all) {
+      $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
+
+    
+
+      if (!empty($nip)) {
+        $account = $nip24->getAccountStatus();
+
+        if (!$account) {
           $result->invalidate($tag, $nip24->getLastError());
+        } else {
+          // Wywołanie metody zwracającej szczegółowe dane firmy
+          $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+
+          if (!$all) {
+            $result->invalidate($tag, $nip24->getLastError());
+          }
         }
       }
     }
@@ -877,6 +893,68 @@ function custom_archive_checkbox_validation_filter($result, $tag)
       ) {
         $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
       } 
+    }
+  }
+
+  if ($_POST['_wpcf7'] == '45319') {
+    if (
+      $tag->name == 'checkbox-m1' ||
+      $tag->name == 'checkbox-k1' ||
+      $tag->name == 'checkbox-f1' ||
+      $tag->name == 'checkbox-g1' ||
+      $tag->name == 'checkbox-m2' ||
+      $tag->name == 'checkbox-f2'
+    ) {
+      if (
+        !isset($_POST['checkbox-m1']) &&
+        !isset($_POST['checkbox-k1']) &&
+        !isset($_POST['checkbox-f1']) &&
+        !isset($_POST['checkbox-g1']) &&
+        !isset($_POST['checkbox-m2']) &&
+        !isset($_POST['checkbox-f2'])
+      ) {
+        $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
+      }
+    }
+  }
+
+  if ($_POST['_wpcf7'] == '45321') {
+    if (
+      $tag->name == 'checkbox-mag-podstawowe' ||
+      $tag->name == 'checkbox-mobile-podstawowe' ||
+      $tag->name == 'checkbox-fakir-podstawowe' ||
+      $tag->name == 'checkbox-magik-podstawowe' ||
+      $tag->name == 'checkbox-kaper-podstawowe' ||
+      $tag->name == 'checkbox-gang-podstawowe' ||
+      $tag->name == 'checkbox-best-podstawowe' ||
+      $tag->name == 'checkbox-analizy-podstawowe' ||
+      $tag->name == 'checkbox-ibusiness-podstawowe' ||
+      $tag->name == 'checkbox-mag-zaawansowane-prestiz' ||
+      $tag->name == 'checkbox-mag-zaawansowane-reporting' ||
+      $tag->name == 'checkbox-gang-zaawansowane' ||
+      $tag->name == 'checkbox-mag-autoryzacja' ||
+      $tag->name == 'checkbox-fakir-autoryzacja' ||
+      $tag->name == 'checkbox-b2c-autoryzacja'
+    ) {
+      if (
+        !isset($_POST['checkbox-mag-podstawowe']) &&
+        !isset($_POST['checkbox-mobile-podstawowe']) &&
+        !isset($_POST['checkbox-fakir-podstawowe']) &&
+        !isset($_POST['checkbox-magik-podstawowe']) &&
+        !isset($_POST['checkbox-kaper-podstawowe']) &&
+        !isset($_POST['checkbox-gang-podstawowe']) && 
+        !isset($_POST['checkbox-best-podstawowe']) && 
+        !isset($_POST['checkbox-analizy-podstawowe']) && 
+        !isset($_POST['checkbox-ibusiness-podstawowe']) && 
+        !isset($_POST['checkbox-mag-zaawansowane-prestiz']) && 
+        !isset($_POST['checkbox-mag-zaawansowane-reporting']) && 
+        !isset($_POST['checkbox-gang-zaawansowane']) && 
+        !isset($_POST['checkbox-mag-autoryzacja']) && 
+        !isset($_POST['checkbox-fakir-autoryzacja']) && 
+        !isset($_POST['checkbox-b2c-autoryzacja'])
+      ) {
+        $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
+      }
     }
   }
 
@@ -1862,4 +1940,34 @@ function modify_sitewide_plugins($value)
   //}
 
   return $value;
+}
+
+// Add Shortcode
+function show_dealers_form() {
+	switch_to_blog(3);
+  $output = do_shortcode('[searchandfilter id="47062"]');
+  restore_current_blog();
+	return $output;
+}
+add_shortcode( 'showdealersform', 'show_dealers_form' );
+
+function the_slug_exists($post_name) {
+  global $wpdb, $current_blog;
+
+  $blog_id = $current_blog->blog_id;
+
+  if ($wpdb->get_row("SELECT post_name FROM ".$wpdb->base_prefix.$blog_id."_posts WHERE post_name = '" . $post_name . "' AND post_status = 'private'", 'ARRAY_A')) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function mytheme_get_slugs($link) {
+  $link = str_replace( home_url( '/' ), '', $link );
+  $link = explode('?', $link)[0];
+  if ( ( $len = strlen( $link ) ) > 0 && $link[$len - 1] == '/' ) {
+    $link = substr( $link, 0, -1 );
+  }
+  return explode( '/', $link );
 }

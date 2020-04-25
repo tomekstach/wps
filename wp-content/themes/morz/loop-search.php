@@ -20,6 +20,11 @@ if ( ! isset( $called_from_shortcode ) ) {
 	$max_columns = 0;
 }
 
+$settings->layout = 'grid';
+$settings->columns = 4;
+$settings->show_media = false;
+$settings->show_meta   = false;
+
 if ( defined( 'VAMTAM_ARCHIVE_TEMPLATE' ) && ! $news ) {
 	$settings->show_content = false;
 }
@@ -84,7 +89,7 @@ if ( $is_cube ) {
 }
 
 ?>
-<div class="loop-wrapper clearfix <?php echo esc_attr( implode( ' ', $wrapper_class ) ) ?>" data-columns="<?php echo esc_attr( $settings->columns ) ?>" <?php echo $data_options_escaped // xss ok ?>>
+<div class="loop-wrapper search-results-loop <?php echo esc_attr( implode( ' ', $wrapper_class ) ) ?>" data-columns="<?php echo esc_attr( $settings->columns ) ?>" <?php echo $data_options_escaped // xss ok ?>>
 <?php
 
 	do_action( 'vamtam_before_main_loop' );
@@ -122,9 +127,9 @@ if ( $is_cube ) {
 
 			$starting_width = 100 / $settings->columns;
 ?>
-			<div <?php post_class( implode( ' ', $post_class ) ) ?> style="width: <?php echo esc_attr( $starting_width ) ?>%">
+			<div <?php post_class( implode( ' ', $post_class ) ) ?> style="width: <?php echo esc_attr( $starting_width-2 ) ?>%">
 				<div>
-					<?php include locate_template( 'templates/post.php' );	?>
+					<?php include locate_template( 'templates/post-search.php' );	?>
 				</div>
 			</div>
 <?php

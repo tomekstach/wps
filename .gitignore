@@ -1,3 +1,5 @@
 wp-config.php
 wp-content/plugins/wp-w3all-phpbb-integration/addons/wp-w3all-config/config.php
+wp-content/uploads/fonts/
+wp-content/uploads/sites/
 .DS_Store
