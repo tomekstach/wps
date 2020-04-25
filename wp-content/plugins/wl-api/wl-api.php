@@ -3,7 +3,7 @@
 /**
  * Plugin name: Custom API
  * Description: Endpoints for wpdev
- * Version: 1.0
+ * Version: 1.1
  * Author: AstoSoft Joanna Stach
  * Author URI: https://astosoft.pl
  */
@@ -155,11 +155,13 @@ function wl_add_contract()
   identyfikator: $new_post_id <br/>
   Zgłoszenie rozwiązane: nie <br/>\n\n";
 
-  $to = 'tomasz.stach@astosoft.pl';
+  $to = 'serwis.wapro@assecobs.pl';
   wp_mail($to, $subject, $message, $headers);
   $to = 'boguslaw.tober@assecobs.pl';
   wp_mail($to, $subject, $message, $headers);
   $to = 'Agnieszka.Palyz@assecobs.pl';
+  wp_mail($to, $subject, $message, $headers);
+  $to = 'wapro_naprawa_bazy@aganik.abs.assecobs.pl';
   wp_mail($to, $subject, $message, $headers);
 
   if ($umowaPodpisana === 0) {
@@ -239,6 +241,63 @@ function wl_add_contract()
       </body>';
 
     wp_mail($to, $subject, $message, $headers, $attachments);
+    $to = 'boguslaw.tober@assecobs.pl';
+    wp_mail($to, $subject, $message, $headers, $attachments);
+    $to = 'Agnieszka.Palyz@assecobs.pl';
+    wp_mail($to, $subject, $message, $headers, $attachments);
+
+    // SEND RODO CONTRACT TO ERP
+    //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+    $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+
+    $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
+
+    $paramsCustomer     = array('ArrayCustomerGetData' => array('CustomerGetData' => array('NIPSameCyfry' => $nip)));
+    $responseCustomer   = $client->CUSTOMERGET($paramsCustomer);
+
+    if ($responseCustomer->ArrayCustomerGetResult->Status != '0') {
+
+      $paramsAgreement    = ['ArrayDPAgreementGetData' => ['DPAgreementGetData' => ['NIPSameCyfry' => $nip]]];
+      $responseAgreement  = $client->DPAgreementGet($paramsAgreement);
+
+      if ($responseAgreement->ArrayDPAgreementGetResult->Status != '0') {
+        if (is_array($responseAgreement->ArrayDPAgreementGetResult->DPAgreementGetResult)) {
+          $DPAgreementGetResult = $responseAgreement->ArrayDPAgreementGetResult->DPAgreementGetResult[count($responseAgreement->ArrayDPAgreementGetResult->DPAgreementGetResult)-1];
+        } else {
+          $DPAgreementGetResult = $responseAgreement->ArrayDPAgreementGetResult->DPAgreementGetResult;
+        }
+      } else {
+        $DPAgreementGetResult = new \stdClass;
+        $DPAgreementGetResult->Konserwacja = '0';
+        $DPAgreementGetResult->Outsourcing = '0';
+        $DPAgreementGetResult->Hosting = '0';
+      }
+
+      $params = ['ArrayAgreementCreateData' => ['AgreementCreateData' => [
+            'NrZewn' => $new_post_id,
+            'Zrodlo' => 'Wapro',
+            'NIPSameCyfry' => $nip,
+            'WersjaUmowy' => '20190624',
+            'DataPodpisania' => date(DATE_ATOM),
+            'RealizacjaOd' => date(DATE_ATOM),
+            'OpisUmowy' => 'Umowa powierzenia przetwarzania danych osobowych',
+            'EDOK' => '1',
+            'Aneks' => '0',
+            'RodzajUmocowania' => $rodoRodaj,
+            'ImieNazwisko' => $firstname . ' ' . $lastname,
+            'DataDo' => '2050-12-31T00:00:00',
+            'RealizacjaDo' => '2050-12-31T00:00:00',
+            'Konserwacja' => $DPAgreementGetResult->Konserwacja,
+            'Outsourcing' => $DPAgreementGetResult->Outsourcing,
+            'DaneKontaktoweDPO' => 'brak',
+            'MailDoZglaszaniaNaruszen' => $email,
+            'UruchTestProg' => '1',
+            'Hosting' => $DPAgreementGetResult->Hosting
+            ]]];
+      $response = $client->AgreementCreate($params);
+
+      //print_r($response);
+    }
   }
 
   return $new_post_id;
@@ -278,6 +337,81 @@ function wl_get_contract()
   } else {
     $umowa->umowa_id  = 0;
     $umowa->message   = 'Brak umowy o podanym indentyfikatorze!';
+  }
+
+  return $umowa;
+}
+
+/**
+ * WP Custom REST API method to get RODO data
+ *
+ * @return object
+ */
+function wl_get_rodo()
+{
+  require_once 'NIP24/NIP24Client.php';
+  \NIP24\NIP24Client::registerAutoloader();
+
+  $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
+
+  $post_id  = intval($_POST['contract']);
+  $nip      = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_POST['nip'])));
+  $post     = get_post($post_id);
+  $umowa    = new \stdClass;
+  $umowa->error = '';
+  $current_user = wp_get_current_user();
+
+  // Sprawdzenie stanu konta
+  $account = $nip24->getAccountStatus();
+
+  if (!$account) {
+    $umowa->error = $nip24->getLastError();
+  } else {
+    // Wywołanie metody zwracającej szczegółowe dane firmy
+    $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
+
+    if ($all) {
+      $umowa->name     = addslashes($all->name);
+      $umowa->address  = $all->street;
+
+      if (empty($umowa->address)) {
+        $umowa->address = $all->city;
+      }
+
+      $umowa->address .= ' ' . $all->streetNumber;
+
+      if (!empty($all->houseNumber)) {
+        $umowa->address .= '/' . $all->houseNumber;
+      }
+
+      $umowa->city       = $all->postCity;
+      if ($all->postCode) {
+        $umowa->postCode   = substr($all->postCode, 0, 2) . '-' . substr($all->postCode, -3);
+      } else {
+        $umowa->postCode = '';
+      }
+    } else {
+      $umowa->error = $nip24->getLastError();
+    }
+  }
+
+  if (isset($post) && $post !== null && $post->post_type == 'umowa_rodo') {
+
+    if ($nip != get_field("nip_klienta", $post_id)) {
+      $umowa->umowa_id  = 0;
+      $umowa->error   = 'Nie masz uprawnień do wybranej umowy!';
+    } elseif (get_field("data_podpisania_umowy", $post_id) != '') {
+      $umowa->umowa_id  = 0;
+      $umowa->error   = 'Umowa została juz podpisana!';
+    } else {
+      $umowa->umowa_id      = $post->ID;
+      $umowa->rodzaj_umowy  = get_field("rodzaj_umowy", $post_id);
+      $umowa->email         = get_field("adres_e_mail", $post_id);
+      $umowa->serwis_email  = get_field("serwis_e-mail", $post_id);
+    }
+  } else {
+    $umowa->umowa_id  = 0;
+    $umowa->error   = 'Brak umowy o podanym indentyfikatorze!';
   }
 
   return $umowa;
@@ -382,5 +516,12 @@ add_action('rest_api_init', function () {
   register_rest_route('wl/v1', 'getContracts', [
     'methods' => 'POST',
     'callback' => 'wl_get_contracts'
+  ]);
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('wl/v1', 'getRodoContract', [
+    'methods' => 'POST',
+    'callback' => 'wl_get_rodo'
   ]);
 });

@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
   $('#get-nip-1').click(function(e) {
-    if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
+    if (!ValidateNip($('#input-nip-klient').val(), '#input-nip-klient')) {
       $('.nip .wpcf7-not-valid-tip').remove();
       $('.nip').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
       return false;
@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
       url: 'https://pomoc.wapro.pl/nip-service/checknip.php',
       type: "GET",
       data: {
-        nip: $('#input-nip').val()
+        nip: $('#input-nip-klient').val()
       }
     }).done(function(string) {
       var obj = JSON.parse(string);

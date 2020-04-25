@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-  $('#get-nip-1').click(function(e) {
+  $('#get-nip-demo').click(function(e) {
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
       $('.yl-nip .wpcf7-not-valid-tip').remove();
       $('.yl-nip').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
     }).done(function(string) {
       var obj = JSON.parse(string);
       if (obj.code == 200) {
-        $('#input-nazwa-firmy').val(obj.content.name);
+        $('#input-nazwa-firmy-demo').val(obj.content.name);
         $('#input-firma-miasto').val(obj.content.city);
         $('.yl-nip .wpcf7-not-valid-tip').remove();
         $('.textfirma .wpcf7-not-valid-tip').remove();

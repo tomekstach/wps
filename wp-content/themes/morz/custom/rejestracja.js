@@ -1,5 +1,7 @@
 jQuery(document).ready(function($) {
 
+  $('#none-form').css('display', 'none');
+
   $("#password-field").attr("placeholder", "Hasło*");
 
   $.ajax({
@@ -12,7 +14,7 @@ jQuery(document).ready(function($) {
       if (data.id > 0) {
         //console.log(data);
 
-        if (data.roles[0] == 'subscriber') {
+        if (data.roles[0] == 'subscriber' || data.roles[0] == 'registered') {
           $('#none-form').css('display', 'block');
           $('#form-partner').css('display', 'none');
         } else {
@@ -54,14 +56,14 @@ jQuery(document).ready(function($) {
         if (obj.content.firstname && obj.content.lastname) {
           $('#input-wlasciciel').val(obj.content.firstname + ' ' + obj.content.lastname);
         }
-        $('#select-wojewodztwo option[value="' + obj.content.state.toLowerCase() + '"]').prop('selected', true);
+        $('#select-wojewodztwo-partner option[value="' + obj.content.state.toLowerCase() + '"]').prop('selected', true);
         $('.your-nip-register .wpcf7-not-valid-tip').remove();
         $('.wlasciciel .wpcf7-not-valid-tip').remove();
         $('.your-company .wpcf7-not-valid-tip').remove();
         $('.your-adres .wpcf7-not-valid-tip').remove();
         $('.your-code .wpcf7-not-valid-tip').remove();
         $('.your-city .wpcf7-not-valid-tip').remove();
-        $('.wojewodztwo .wpcf7-not-valid-tip').remove();
+        $('.wojewodztwo-partner .wpcf7-not-valid-tip').remove();
       } else {
         $('.your-nip-register .wpcf7-not-valid-tip').remove();
         $('.your-nip-register').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');

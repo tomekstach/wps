@@ -1,8 +1,10 @@
 jQuery(document).ready(function($) {
 
+  //$('#input-nazwa-firmy').prop('readonly', true);
+
   $('.multistep-cf7-next').click(function(e) {
 
-    if ($('#input-nip').val() != '') {
+    /*if ($('#input-nip').val() != '') {
       console.log('Check RODO contract!');
 
       $('#rodo-name').val($('#input-firma-imie').val() + ' ' + $('#input-firma-nazwisko').val());
@@ -17,25 +19,33 @@ jQuery(document).ready(function($) {
       }).done(function(string) {
         var obj = JSON.parse(string);
 
-        //console.log(obj.content);
+        console.log(obj.content);
 
         if (obj.code == 200) {
 
-          if (obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.DataPodpisania) {
-            //console.log(obj.content.ArrayDPAgreementGetResult);
+          if (Array.isArray(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult)) {
+            var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult[obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.length - 1]
+          } else {
+            var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult;
+          }
 
-            var d = new Date(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.DataPodpisania);
+          if (DPAgreementGetResult.DataPodpisania) {
+            console.log(DPAgreementGetResult);
+
+            var d = new Date(DPAgreementGetResult.DataPodpisania);
             var month = d.getMonth() + 1;
             var day = d.getDate();
             var output = (day < 10 ? '0' : '') + day + '/' +
               (month < 10 ? '0' : '') + month + '/' +
               d.getFullYear();
 
-            var dataDo = new Date(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.DataDo);
+            var dataDo = new Date(DPAgreementGetResult.DataDo);
             var current = new Date();
 
-            if (obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.Hosting == '1' && dataDo > current) {
-              $('#rodo-rodzaj').val(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.RodzajUmocowania);
+            if (DPAgreementGetResult.Hosting == '1' && dataDo > current) {
+              if (typeof DPAgreementGetResult.RodzajUmocowania !== "undefined" && DPAgreementGetResult.RodzajUmocowania) {
+                $('#rodo-rodzaj').val(DPAgreementGetResult.RodzajUmocowania);
+              }
               $('#zgoda-rodo').attr('checked', true);
               $('#data-umowy').val(output);
               $('#umowa-podpisana').val('1');
@@ -43,15 +53,19 @@ jQuery(document).ready(function($) {
               $('#formularz-rodo').css('display', 'none');
               $('#formularz-rodo-info').css('display', 'block');
             } else {
+              console.log(DPAgreementGetResult.RodzajUmocowania);
+              if (typeof DPAgreementGetResult.RodzajUmocowania !== "undefined" && DPAgreementGetResult.RodzajUmocowania) {
+                $('#rodo-rodzaj').val(DPAgreementGetResult.RodzajUmocowania);
+              }
               $('#umowa-podpisana').val('0');
             }
           }
         }
       });
-    }
+    }*/
   });
 
-  $('#get-nip-1').click(function(e) {
+  $('#get-nip-online').click(function(e) {
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
       $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
       $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
@@ -64,15 +78,17 @@ jQuery(document).ready(function($) {
 
     $.ajax({
       url: 'https://wapro.pl/nip-service/checknip.php',
+      // url: 'https://wapro.pl/erp-service/erp_service.php',
       type: "GET",
       data: {
-        nip: $('#input-nip').val()
+        nip: $('#input-nip').val(),
+        check: 1
       }
     }).done(function(string) {
       var obj = JSON.parse(string);
 
       if (obj.code == 200) {
-        $('#input-nazwa-firmy').val(obj.content.name);
+        $('#input-nazwa-firmy-online').val(obj.content.name);
         $('#input-firma-miasto').val(obj.content.city);
         $('#input-firma-kod-pocztowy').val(obj.content.postCode);
         $('#input-firma-ulica').val(obj.content.address);

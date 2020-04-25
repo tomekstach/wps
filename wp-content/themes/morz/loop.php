@@ -78,7 +78,7 @@ if ( $is_cube ) {
 	$GLOBALS['vamtam_inside_cube'] = true;
 
 	// print late styles, otherwise Beaver will skip over some of them
-	if ( ! doing_filter( 'get_the_excerpt' ) ) {
+	if ( ! doing_filter( 'get_the_excerpt' ) && ! is_admin() ) {
 		print_late_styles();
 	}
 }

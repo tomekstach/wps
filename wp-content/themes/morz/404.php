@@ -8,14 +8,31 @@
 // AstoSoft - start
 $user = wp_get_current_user();
 
-$the_slug = str_replace('/', '', $_SERVER['REQUEST_URI']);
-$page = get_page_by_path($the_slug);
-$page_title = get_the_title($page);
+$slug_array = mytheme_get_slugs($_SERVER['REQUEST_URI']);
+$the_slug   = end($slug_array);
 
-if ($page_title != '' && in_array('subscriber', $user->roles)) {
+if (the_slug_exists($the_slug)) {
+  $page_title   = $the_slug;
+  $post_status  = 'private';
+} else {
+  $page_title   = false;
+  $post_status  = false;
+}
+
+/*if (is_object($page)) {
+  $page_title = get_the_title($page);
+  $post_status = $page->post_status;
+} else {
+  $page_title   = false;
+  $post_status  = false;
+}*/
+
+if ($page_title !== false && $post_status == 'private' && (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles) || in_array('subscriber', $user->roles))) {
   wp_redirect(get_site_url() . '/dziekujemy-za-rejestracje/');
-} else if ($page_title != '') {
+} else if ($page_title !== false && $post_status == 'private' && $user->ID > 0) {
   wp_redirect(get_site_url() . '/rejestracja/');
+} else if ($page_title !== false && $post_status == 'private' && $user->ID == 0) {
+  wp_redirect(get_site_url() . '/logowanie/?redirect_to=' . str_replace(home_url( '/' ), '', $_SERVER['REQUEST_URI']));
 }
 // AstoSoft - end
 get_header();

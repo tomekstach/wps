@@ -13,8 +13,10 @@ jQuery(document).ready(function($) {
     if ($('#input-nip').val() != '') {
       console.log('Check RODO contract!');
 
-      $('#rodo-name').val($('#input-imie').val() + ' ' + $('#input-nazwisko').val());
+      $('#rodo-name').val($('#input-imie-klient').val() + ' ' + $('#input-nazwisko-klient').val());
       $('#rodo-e-mail').val($('#input-email').val());
+      $('#rodo-name').prop('readonly', true);
+      $('#rodo-e-mail').prop('readonly', true);
 
       $.ajax({
         url: 'https://pomoc.wapro.pl/erp-service/erp_service.php',
@@ -39,18 +41,26 @@ jQuery(document).ready(function($) {
           if (obj.content.ArrayDPAgreementGetResult.Status == '1') {
             console.log(obj.content.ArrayDPAgreementGetResult);
 
-            var d = new Date(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.DataPodpisania);
+            if (Array.isArray(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult)) {
+              var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult[obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.length - 1]
+            } else {
+              var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult;
+            }
+
+            var d = new Date(DPAgreementGetResult.DataPodpisania);
             var month = d.getMonth() + 1;
             var day = d.getDate();
             var output = (day < 10 ? '0' : '') + day + '/' +
               (month < 10 ? '0' : '') + month + '/' +
               d.getFullYear();
 
-            var dataDo = new Date(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.DataDo);
+            var dataDo = new Date(DPAgreementGetResult.DataDo);
             var current = new Date();
 
-            if (obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.UruchTestProg == '1' && dataDo > current) {
-              $('#rodo-rodzaj').val(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.RodzajUmocowania);
+            if (DPAgreementGetResult.UruchTestProg == '1' && dataDo > current) {
+              if (typeof DPAgreementGetResult.RodzajUmocowania !== "undefined" && DPAgreementGetResult.RodzajUmocowania) {
+                $('#rodo-rodzaj').val(DPAgreementGetResult.RodzajUmocowania);
+              }
               $('#zgoda-rodo').attr('checked', true);
               $('#data-umowy').val(output);
               $('#umowa-podpisana').val('1');
@@ -58,6 +68,9 @@ jQuery(document).ready(function($) {
               $('#formularz-rodo').css('display', 'none');
               $('#formularz-rodo-info').css('display', 'block');
             } else {
+              if (typeof DPAgreementGetResult.RodzajUmocowania !== "undefined" && DPAgreementGetResult.RodzajUmocowania) {
+                $('#rodo-rodzaj').val(DPAgreementGetResult.RodzajUmocowania);
+              }
               $('#formularz-rodo').css('display', 'block');
               $('#formularz-rodo-info').css('display', 'none');
               $('#data-umowy').val(c_output);
@@ -86,9 +99,9 @@ jQuery(document).ready(function($) {
   });
 
   $('.cf7-tab-2 .multistep-cf7-next').click(function(e) {
-    console.log('Send RODO contract!');
 
-    if ($('#umowa_id').val() == '') {
+    if ($('#umowa_id').val() == '' && $('#input-imie-klient').val() != '' && $('#input-nazwisko-klient').val() != '' && $('#rodo-rodzaj').val() != '' && $('#zgoda-rodo').prop('checked')) {
+      console.log('Send RODO contract!');
       $.ajax({
         type: "POST",
         url: "/wp-json/wl/v1/addContract",
@@ -96,8 +109,8 @@ jQuery(document).ready(function($) {
           nip: $('#input-nip').val(),
           firm: $('#input-nazwa-firmy').val(),
           email: $('#input-email').val(),
-          firstname: $('#input-imie').val(),
-          lastname: $('#input-nazwisko').val(),
+          firstname: $('#input-imie-klient').val(),
+          lastname: $('#input-nazwisko-klient').val(),
           phone: $('#input-tel').val(),
           rodoRodaj: $('#rodo-rodzaj').val(),
           umowaPodpisana: $('#umowa-podpisana').val()

@@ -263,7 +263,8 @@ p.pp-cf7-form-description {
   color: #3ca9d1;
 }
 
-#main .wpcf7-response-output {
+#main .wpcf7-response-output,
+#main .wpcf7-jpk-needed {
   border-style: solid;
   border-width: 0;
   background-clip: padding-box;
