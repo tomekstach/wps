@@ -13,7 +13,7 @@ get_header(); ?>
 	<?php if ( have_posts() ) : the_post(); ?>
 		<?php VamtamTemplates::$in_page_wrapper = true; ?>
 
-		<article id="post-<?php the_ID(); ?>" <?php post_class( VamtamTemplates::get_layout() ); ?>>
+		<article id="post-<?php the_ID(); ?>">
 			<div class="page-content clearfix">
 				<?php
 				rewind_posts();
@@ -22,7 +22,7 @@ get_header(); ?>
 				?>
 			</div>
 		</article>
-		<?php get_template_part( 'sidebar' ) ?>
+		<?php //get_template_part( 'sidebar' ) ?>
 	<?php else : ?>
 	<article id="vamtam-no-search-results">
 		<?php VamtamEnqueues::enqueue_style_and_print( 'vamtam-not-found' ); ?>
