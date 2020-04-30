@@ -856,7 +856,7 @@ function custom_archive_checkbox_validation_filter($result, $tag)
     }
   }
 
-  if ($_POST['_wpcf7'] == '35288') {
+  if ($_POST['_wpcf7'] == '46505') {
     if (
       $tag->name == 'demo-checkbox-mag' ||
       $tag->name == 'demo-checkbox-fakir' ||
@@ -891,7 +891,7 @@ function custom_archive_checkbox_validation_filter($result, $tag)
         !isset($_POST['demo-checkbox-jpk']) &&
         !isset($_POST['demo-checkbox-ppk'])
       ) {
-        $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
+        $result->invalidate($tag, '');
       } 
     }
   }
