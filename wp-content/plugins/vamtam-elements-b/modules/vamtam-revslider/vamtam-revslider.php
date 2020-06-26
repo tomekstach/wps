@@ -30,6 +30,7 @@ FLBuilder::register_module( 'VamtamRevslider', array(
 						'default'     => '',
 						'type'        => 'select',
 						'options'     => class_exists( 'VamtamTemplates' ) ? VamtamTemplates::get_rev_sliders( '' ) : array(),
+						'vamtam-wpml' => 'line',
 					),
 				),
 			),

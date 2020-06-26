@@ -58,7 +58,7 @@ if ( class_exists( 'Vamtam_Importers' ) && is_callable( array( 'Vamtam_Importers
 }
 
 // AstoSoft - start
-$badNIPs = ['9970152873'];
+$badNIPs = ['9970152873','5871506047'];
 
 add_post_type_support( 'page', 'excerpt' );
 
@@ -686,6 +686,11 @@ function custom_archive_text_validation_filter($result, $tag)
     $nip_eu = 'PL' . $nip;
 
     if (!in_array($nip, $badNIPs)) {
+      if (!validateNip($nip)) {
+        $result->invalidate($tag, 'NIP jest niepoprawny!');
+        return $result;
+      }
+
       require_once 'custom/NIP24/NIP24Client.php';
 
       \NIP24\NIP24Client::registerAutoloader();
@@ -702,7 +707,21 @@ function custom_archive_text_validation_filter($result, $tag)
         $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
 
         if (!$all) {
-          $result->invalidate($tag, $nip24->getLastError());
+          if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
+            $result->invalidate($tag, $nip24->getLastError());
+          } else {
+            //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+            $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+
+            $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
+
+            $paramsCustomer     = array('ArrayCustomerGetData' => array('CustomerGetData' => array('NIPSameCyfry' => $nip)));
+            $responseCustomer   = $client->CUSTOMERGET($paramsCustomer);
+
+            if ($responseCustomer->ArrayCustomerGetResult->Status != '1') {
+              $result->invalidate($tag, 'Niepoprawny NIP!');
+            }
+          }
         }
       }
     }
@@ -746,8 +765,6 @@ function custom_text_validation_filter($result, $tag)
 
       $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
 
-    
-
       if (!empty($nip)) {
         $account = $nip24->getAccountStatus();
 
@@ -758,10 +775,30 @@ function custom_text_validation_filter($result, $tag)
           $all = $nip24->getAllDataExt(\NIP24\Number::NIP, $nip, false);
 
           if (!$all) {
-            $result->invalidate($tag, $nip24->getLastError());
+            if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
+              $result->invalidate($tag, $nip24->getLastError());
+            } else {
+              //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+              $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+
+              $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
+
+              $paramsCustomer     = array('ArrayCustomerGetData' => array('CustomerGetData' => array('NIPSameCyfry' => $nip)));
+              $responseCustomer   = $client->CUSTOMERGET($paramsCustomer);
+
+              if ($responseCustomer->ArrayCustomerGetResult->Status != '1') {
+                $result->invalidate($tag, 'Niepoprawny NIP!');
+              }
+            }
           }
         }
       }
+    }
+  }
+
+  if (($tag->name == 'adm-imie' || $tag->name == 'adm-nazwisko') && (isset($_POST['checkbox-serwis-biznes']) || isset($_POST['checkbox-serwis-prestiz']))) {
+    if ($_POST[$tag->name] == '') {
+      $result->invalidate($tag, "Proszę wypełnić wszystkie wymagane pola!");
     }
   }
 
@@ -816,6 +853,12 @@ function custom_email_validation_filter($result, $tag)
       if (($_POST['biuro-email'] == '' || $_POST['biuro-NIP'] == '') && ($_POST['biuro-email'] != '' || $_POST['biuro-NIP'] != '')) {
         $result->invalidate($tag, "Konieczne jest podanie NIP-u oraz adresu e-mail biura.");
       }
+    }
+  }
+
+  if ($tag->name == 'adm-e-mail' && (isset($_POST['checkbox-serwis-biznes']) || isset($_POST['checkbox-serwis-prestiz']))) {
+    if ($_POST[$tag->name] == '') {
+      $result->invalidate($tag, "Proszę wypełnić wszystkie wymagane pola!");
     }
   }
 
@@ -896,25 +939,20 @@ function custom_archive_checkbox_validation_filter($result, $tag)
     }
   }
 
-  if ($_POST['_wpcf7'] == '45319') {
-    if (
-      $tag->name == 'checkbox-m1' ||
-      $tag->name == 'checkbox-k1' ||
-      $tag->name == 'checkbox-f1' ||
-      $tag->name == 'checkbox-g1' ||
-      $tag->name == 'checkbox-m2' ||
-      $tag->name == 'checkbox-f2'
-    ) {
-      if (
-        !isset($_POST['checkbox-m1']) &&
-        !isset($_POST['checkbox-k1']) &&
-        !isset($_POST['checkbox-f1']) &&
-        !isset($_POST['checkbox-g1']) &&
-        !isset($_POST['checkbox-m2']) &&
-        !isset($_POST['checkbox-f2'])
-      ) {
-        $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
+  if ($_POST['_wpcf7'] == '45319' || $_POST['_wpcf7'] == '46148' || $_POST['_wpcf7'] == '46146') {
+    $checkboxTag    = false;
+    $checkboxValue  = false;
+
+    if (strpos($tag->name, 'checkbox-') !== false) $checkboxTag  = true;
+
+    foreach ($_POST as $key => $value) {
+      if (strpos($key, 'checkbox-') !== false) {
+        $checkboxValue = true;
       }
+    }
+
+    if ($checkboxTag && !$checkboxValue) {
+      $result->invalidate($tag, 'Proszę wybrać przynajmniej jedną opcję!');
     }
   }
 
@@ -958,17 +996,16 @@ function custom_archive_checkbox_validation_filter($result, $tag)
     }
   }
 
-  if (
-    $tag->name == 'checkbox-serwis-biznes' ||
-    $tag->name == 'checkbox-serwis-prestiz'
+  if ($tag->name == 'checkbox-serwis-biznes' || $tag->name == 'checkbox-serwis-prestiz') {
+    if (
+      (isset($_POST['checkbox-backup-podst']) || 
+      isset($_POST['checkbox-backup-rozsz'])) &&
+      !isset($_POST['checkbox-serwis-biznes']) &&
+      !isset($_POST['checkbox-serwis-prestiz'])
     ) {
-      if (
-        !isset($_POST['checkbox-serwis-biznes']) &&
-        !isset($_POST['checkbox-serwis-prestiz'])
-      ) {
-        $result->invalidate($tag, 'Proszę wybrać przynajmniej jeden serwer!');
-      }
-   }
+      $result->invalidate($tag, 'Proszę wybrać przynajmniej jeden serwer!');
+    }
+  }
 
   return $result;
 }
@@ -1349,7 +1386,7 @@ function after_sent_mail($cf7)
     if ($data['_wpcf7'] == '35288' or $data['_wpcf7'] == '52001') {
       global $current_user;
       $current_user = wp_get_current_user();
-      $nip  = $data['NIP'];
+      $nip  = $data['yl-nip'];
 
       // SEND RODO CONTRACT TO ERP
       //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
@@ -1369,17 +1406,17 @@ function after_sent_mail($cf7)
             'KlientImie' => $data['firma-imie'],
             'KlientNazwisko' => $data['firma-nazwisko'],
             'KlientNazwaFirmy' => $data['firma'],
-            'KlientKodP' => $data['firma-kod-pocztowy'],
-            'KlientMiasto' => $data['firma-miasto'],
-            'KlientUlica' => $data['firma-ulica'],
-            'KlientNIP' => str_replace('-', '', trim($data['NIP'])),
-            'KlientNipSameCyfry' => str_replace('-', '', trim($data['NIP'])),
+            'KlientKodP' => $data['yl-kod-pocztowy'],
+            'KlientMiasto' => $data['yl-miasto'],
+            'KlientUlica' => $data['yl-ulica'],
+            'KlientNIP' => str_replace('-', '', trim($data['yl-nip'])),
+            'KlientNipSameCyfry' => str_replace('-', '', trim($data['yl-nip'])),
             'KlientTelefon' => $data['firma-telefon'],
             'KlientEmail' => $data['firma-e-mail'],
-            'KontaktImie' => $data['kontakt-imie'],
-            'KontaktNazwisko' => $data['kontakt-nazwisko'],
-            'KontaktTelefon' => $data['kontakt-telefon'],
-            'KontaktEmail' => $data['kontakt-e-mail'],
+            'KontaktImie' => $data['yl-imie'],
+            'KontaktNazwisko' => $data['yl-nazwisko'],
+            'KontaktTelefon' => $data['yl-telefon'],
+            'KontaktEmail' => $data['yl-email'],
             'KontakUwagi' => $data['uwagi'],
             'ProgramOnline' => $posiadaOnline,
             'ProgramMag' => intval($_POST['number-mag']) == 0 ? 0 : 1,
@@ -1971,3 +2008,29 @@ function mytheme_get_slugs($link) {
   }
   return explode( '/', $link );
 }
+
+function validatenip($nip) {
+  $nip = preg_replace("/-/","",$nip);
+  $valid = false;
+
+  if (preg_match('/^([0-9])\1{9}$/', $nip)) {
+    return $valid;
+  }
+
+  $weights = array( 6, 5, 7, 2, 3, 4, 5, 6, 7 );
+  $nip = preg_replace( '/^PL/', '', $nip );
+
+  if (strlen($nip) == 10 && is_numeric($nip)) {
+    $sum = 0;
+
+    for($i = 0; $i < 9; $i++) {
+        $sum += $nip[$i] * $weights[$i];
+    }
+
+    $valid = ($sum % 11) == $nip[9];
+  }
+
+  return $valid;
+}
+
+//add_filter('jetpack_development_mode', '__return_false');

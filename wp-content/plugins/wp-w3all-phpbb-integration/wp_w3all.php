@@ -6,7 +6,7 @@
 Plugin Name: WordPress w3all phpBB integration
 Plugin URI: http://axew3.com/w3
 Description: Integration plugin between WordPress and phpBB. It provide free integration - users transfer/login/register. Easy, light, secure, powerful
-Version: 2.3.3
+Version: 2.3.5
 Author: axew3
 Author URI: http://www.axew3.com/w3
 License: GPLv2 or later
@@ -32,7 +32,7 @@ endif;
 if( get_option('w3all_not_link_phpbb_wp') == 1 ){
 define('WPW3ALL_NOT_ULINKED', true);
 }
-define( 'WPW3ALL_VERSION', '2.3.3' );
+define( 'WPW3ALL_VERSION', '2.3.5' );
 define( 'WPW3ALL_MINIMUM_WP_VERSION', '5.0' );
 define( 'WPW3ALL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPW3ALL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );   
@@ -101,7 +101,6 @@ if(isset($w3reset_cookie_domain)){
    // so it is used on class.wp.w3all.widgets-phpbb.php 
    // inside public function wp_w3all_phpbb_last_topics($post_text, $topics_number, $text_words) {
    // to avoid another call if possible
-
 
    if(!empty($w3all_w_lastopicspost_max)){
      foreach ($w3all_w_lastopicspost_max as $row) {
@@ -585,9 +584,6 @@ function w3all_iframe_href_switch(){
 
  if ( defined('PHPBB_INSTALLED') && !isset($w3deactivate_wp_w3all_plugin) ){
 
-// w3_wplogin_after_ins() login the user in WP, AFTER the phpBB user insertion in WP, on verify_phpbb_credentials()
-// OR duplicated same user insertion in WP will happen executing login actions immediately after!
-add_action( 'init', array( 'WP_w3all_phpbb','w3_wplogin_after_ins'), 10, 0 );  
 add_action( 'init', array( 'WP_w3all_phpbb', 'w3all_get_unread_topics'), 9);
 // get all phpBB user capabilities
 // TODO: put this into main user query, on class.wp.w3all-phpbb.php
@@ -720,6 +716,40 @@ function wp_w3_error($redirect_to='', $message=''){
   } else { return false; }
 }
 
+//add_action('wp_head','wp_w3all_new_phpbbpm_wp_menu_item_push');
+function wp_w3all_new_phpbbpm_wp_menu_item_push($elemID, $msg='') {
+ global $w3all_custom_output_files, $w3all_iframe_phpbb_link_yn, $wp_w3all_forum_folder_wp, $w3all_url_to_cms;
+
+if ( is_user_logged_in() ) {
+ // NOTE: primary-menu OR THE ID of the UL that contain li menu items	
+ $elemID = empty($elemID) ? 'menu-main1' : $elemID;
+
+if ( defined("W3PHPBBUSESSION") ) {
+ $phpbb_user_session = unserialize(W3PHPBBUSESSION);
+   if($phpbb_user_session[0]->user_unread_privmsg > 0){
+	
+	if ($w3all_iframe_phpbb_link_yn > 0){
+		$w3all_url_to_phpbb_ib = get_home_url() . "/" . $wp_w3all_forum_folder_wp . "/?i=pm&folder=inbox";
+	} else {
+	        $w3all_url_to_phpbb_ib = $w3all_url_to_cms . "/ucp.php?i=pm&folder=inbox";
+         }
+        
+$s = "<script>
+jQuery(document).ready(function($) {
+ var msgs = '".__( 'You have ', 'wp-w3all-phpbb-integration' )."' + ".$phpbb_user_session[0]->user_unread_privmsg." + '".__( ' unread forum PM', 'wp-w3all-phpbb-integration' )."';
+ jQuery('#".$elemID."').append('<li id=\"menu-item-99\" class=\"menu-item\"><a href=\"".$w3all_url_to_phpbb_ib."\">' + msgs + '</li>');
+});
+
+</script>
+<style type=\"text/css\"></style>";
+	echo $s;
+	
+   }
+  }
+ }
+}
+
+
 // workaround for password on Signups: see wp_hash_password() here below
  function w3_wp_pre_insert_user_meta( $meta, $user, $update ) {
        
@@ -778,7 +808,7 @@ function wp_hash_password( $password, $params = array() ) {
   // Could be worked around just skipping hash of the password, when on signup and the pass need to be stored as plain, then hashed on signup confirmation and WP user creation.
   // Any way may fail:
   // 'preprocess_signup_form' fail (not fire on some plugin)
-  // 'after_signup_user' may fail again, not fire ï¿½cause
+  // 'after_signup_user' may fail again, not fire ’cause
  /*
  * Record user signup information for future activation.
  *

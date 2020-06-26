@@ -1,4 +1,16 @@
 jQuery(document).ready(function($) {
+  $('.multistep-cf7-next').click(function(e) {
+    if ($('.checkbox-serwis-biznes input').is(':checked') || $('.checkbox-serwis-prestiz input').is(':checked')) {
+      $('#online-form-administrator').show();
+      $('#online-form-administrator-bez').hide();
+      $('#online-form-regulamin').attr('href', 'https://wapro.pl/doc/Regulamin_WAPRO_online_svr.pdf');
+    } else {
+      $('#online-form-administrator').hide();
+      $('#online-form-administrator-bez').show();
+      $('#online-form-regulamin').attr('href', 'https://wapro.pl/doc/Regulamin_WAPRO_online.pdf');
+    }
+  });
+
   $('.program-number').bind('keyup mouseup', function() {
     calculateSum();
   });

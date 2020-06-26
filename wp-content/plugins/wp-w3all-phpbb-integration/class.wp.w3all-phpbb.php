@@ -65,8 +65,8 @@ private static function w3all_wp_logout($redirect = ''){
 	  
 	  if($redirect == 'wp_login_url'){
 	  	wp_redirect( wp_login_url() ); exit;
-    }
-    
+	  }
+
     wp_redirect( home_url() ); exit;
   
  }
@@ -136,31 +136,31 @@ $res_c = serialize($res);
 }
 
 private static function verify_phpbb_credentials(){
-  global $w3all_config, $wpdb, $w3cookie_domain, $w3all_anti_brute_force_yn, $w3all_bruteblock_phpbbulist, $w3all_phpbb_lang_switch_yn, $useragent, $wp_w3all_forum_folder_wp, $w3all_profile_sync_bp_yn, $w3all_phpbb_mchat_get_opt_yn, $w3all_exclude_id1,$w3all_add_into_wp_u_capability;
-        
-  if (defined("W3PHPBBCONFIG")){ 
-    $phpbb_config = unserialize(W3PHPBBCONFIG);
-  } else {
-    $phpbb_config = self::w3all_get_phpbb_config();
-    $res_c = serialize($phpbb_config);
-    define( "W3PHPBBCONFIG", $res_c );
-  }
+           global $w3all_config, $wpdb, $w3cookie_domain, $w3all_anti_brute_force_yn, $w3all_bruteblock_phpbbulist, $w3all_phpbb_lang_switch_yn, $useragent, $wp_w3all_forum_folder_wp, $w3all_profile_sync_bp_yn, $w3all_phpbb_mchat_get_opt_yn, $w3all_exclude_id1,$w3all_add_into_wp_u_capability;
+           	 
+        	 if (defined("W3PHPBBCONFIG")){ 
+        	 	$phpbb_config = unserialize(W3PHPBBCONFIG);
+        	 	} else {
+       $phpbb_config = self::w3all_get_phpbb_config();
+       $res_c = serialize($phpbb_config);
+       define( "W3PHPBBCONFIG", $res_c );
+      }
         	 
-  $w3db_conn = self::w3all_db_connect();
+        	 $w3db_conn = self::w3all_db_connect();
 
-  if( isset($_GET['action']) && $_GET['action'] == 'logout' ){	
-      self::w3all_wp_logout();
-    return;
-  }
+      if( isset($_GET['action']) && $_GET['action'] == 'logout' ){	
+      	 self::w3all_wp_logout();
+      	return;
+      }
 
-  $k   = $phpbb_config["cookie_name"].'_k';
-  $sid = $phpbb_config["cookie_name"].'_sid';
-  $u   = $phpbb_config["cookie_name"].'_u';
-
-    // HERE INSIDE WE ARE SECURE //
-  $_COOKIE[$u] = (isset($_COOKIE[$u])) ? $_COOKIE[$u] : 1;
-  $_COOKIE[$sid] = (isset($_COOKIE[$sid])) ? $_COOKIE[$sid] : '';
-  $_COOKIE[$k] = (isset($_COOKIE[$k])) ? $_COOKIE[$k] : ''; 
+        $k   = $phpbb_config["cookie_name"].'_k';
+        $sid = $phpbb_config["cookie_name"].'_sid';
+        $u   = $phpbb_config["cookie_name"].'_u';
+   
+          // HERE INSIDE WE ARE SECURE //
+        $_COOKIE[$u] = (isset($_COOKIE[$u])) ? $_COOKIE[$u] : 1;
+        $_COOKIE[$sid] = (isset($_COOKIE[$sid])) ? $_COOKIE[$sid] : '';
+        $_COOKIE[$k] = (isset($_COOKIE[$k])) ? $_COOKIE[$k] : ''; 
  
     $ck1 = wp_get_current_user();
     // before this
@@ -230,7 +230,7 @@ if ( empty( $phpbb_k ) ){ // it is not a remember login
  		// to return an error message in wordpress // see function w3all_msgs()
  		setcookie ("w3all_set_cmsg", "phpbb_ban", 0, "/", $w3cookie_domain, false);
  		 $wp_user_data = get_user_by( 'login', $phpbb_user_session[0]->username );    
-	  if($wp_user_data){
+	  if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	   $wpdb->query("UPDATE $wpu_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
     }
      self::w3all_wp_logout('wp_login_url');
@@ -243,7 +243,7 @@ if ( empty( $phpbb_k ) ){ // it is not a remember login
         if( $phpbb_user_session[0]->ban_userid > 2 && $phpbb_user_session[0]->group_name != 'ADMINISTRATORS' ){
         	  $wp_user_data = get_user_by( 'login', $phpbb_user_session[0]->username );
         	  $wpu_db_utab = (is_multisite()) ? WPW3ALL_MAIN_DBPREFIX . 'usermeta' : $wpdb->prefix . 'usermeta';
-	         if($wp_user_data){
+	         if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	          $wpdb->query("UPDATE $wpu_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
         	 } 
         	   self::w3all_wp_logout('wp_login_url');
@@ -681,8 +681,6 @@ $last_updated = date('Y-m-d H:i:s');
      if ( is_admin() ) {  // going on profile directly, after user have change a phpBB profile field: a refresh is done here
      	                    // to show updated user's profile fields data, that have been already updated into WP db, but not loaded into actual loaded user instance      
        $redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
-       echo $redirect_to;
-    exit();
    		if ( ( empty( $redirect_to ) || $redirect_to == 'wp-admin/' || $redirect_to == admin_url() ) ) {
 			// If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
 			if ( is_multisite() && !get_active_blog_for_user($current_user->ID) && !is_super_admin( $current_user->ID ) )
@@ -692,8 +690,9 @@ $last_updated = date('Y-m-d H:i:s');
       elseif ( !$current_user->has_cap('edit_posts') OR is_admin() )
         // AstoSoft
 				$redirect_to = home_url();
+				//$redirect_to = $current_user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url();
 			else
-				$redirect_to = home_url();  
+        $redirect_to = home_url();  
       }
      }
               
@@ -756,13 +755,11 @@ $last_updated = date('Y-m-d H:i:s');
                );    
 
   $user_id = wp_insert_user( $userdata );
-  $on_ins = true;
-  // REMOVE a possible duplicated inserted users
-  // https://wordpress.org/support/topic/wp_insert_user-on-init-duplicate-created-user/
-  // SEE if(!defined("WPUSERJUSTINSDATA")){ // few lines below here
-  // RESOLVED, but this code remain here at moment
- 
-/*$wp_duplicated_u = $wpdb->get_results("SELECT * FROM $wpu_db_utab WHERE user_login = '".$phpbb_user_session[0]->username."'",ARRAY_A);
+  $on_ins = 1;
+
+// NOTE: duplicated users insertions on iframe first time login RESOLVED (see more below on redirect for iframe) but this code remain here
+// but when never the first login happen into wp page forum, and a redirect to same page will happen, this will remove by the way the duplicated wp user
+ $wp_duplicated_u = $wpdb->get_results("SELECT * FROM $wpu_db_utab WHERE user_login = '".$phpbb_user_session[0]->username."'",ARRAY_A);
  if(count($wp_duplicated_u) > 1){
    $dupuser = array_pop($wp_duplicated_u);
   if($dupuser['ID'] > 1){
@@ -777,7 +774,7 @@ $last_updated = date('Y-m-d H:i:s');
    	    wpmu_delete_user( $dupuser['ID'] );
    	  }
    	}
-  }*/
+  }
 
         if ( ! is_wp_error( $user_id ) ) {   
          // update user_login and user_nicename and force to be what needed
@@ -797,25 +794,14 @@ $last_updated = date('Y-m-d H:i:s');
     
     if( !$user ) { return; }
 
-   if(isset($on_ins)){ // do not follow with logging in here, or duplicated insert will happen!   
-     if(!defined("WPUSERJUSTINSDATA")){
-     	$user = get_user_by( 'ID', $user_id );
-     	$udata = serialize($user);
-      define("WPUSERJUSTINSDATA",$udata); 
-      return; // do not follow with login then redirection if inserting user, do it into w3_wplogin_after_ins()
-     }
-    }  
-
      	 $remember = ( empty($phpbb_k) ) ? false : 1; // Note that 1 is needed: true as $remember lead to false result
      
         wp_set_current_user( $user->ID, $user->user_login );
         wp_set_auth_cookie( $user->ID, $remember, is_ssl() );
         do_action( 'wp_login', $user->user_login, $user ); 
-        // TEST this: should update also on profile update when on a tab update phpBB then on another reload wp profile (email update done into phpBB for example) 
-        // update_user_caches(new WP_User($user->ID));
-        
+                
 // START w3all redirect to phpBB (user redirected onlogin by snippet added into phpBB, to add user in WP)
-  // Redirect to phpBB, if redirected by 'phpBB onlogin': if snippet code in phpBB is used to redirect in WP and add the user +- at same time into WP (good for not iframe mode)
+// Redirect to phpBB, if redirected by 'phpBB onlogin': if snippet code in phpBB is used to redirect in WP and add the user +- at same time into WP (good for not iframe mode)
 
      if(isset($_GET["w3allAU"])){
        $uw = base64_decode(trim($_GET["w3allAU"]));
@@ -823,7 +809,7 @@ $last_updated = date('Y-m-d H:i:s');
      	 exit;
      }
 
-    $redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
   	if ( ( empty( $redirect_to ) || $redirect_to == admin_url() ) ) {
       // If the user doesn't belong to a blog, send them to user admin. If the user can't edit posts, send them to their profile.
       // AstoSoft - Start
@@ -831,16 +817,14 @@ $last_updated = date('Y-m-d H:i:s');
 				$redirect_to = user_admin_url();
 			elseif ( is_multisite() && !$user->has_cap('read') )
 				$redirect_to = get_dashboard_url( $user->ID );
-      elseif ( !$user->has_cap('edit_posts') OR is_admin() )
-        $redirect_to = $user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url();*/
-      if ( is_multisite() && !is_super_admin( $user->ID )) {
-        $redirect_to = home_url();
-      }
-        // AstoSoft - End
-      // (try) check if it is a login done via phpBB into WP iframed page
-      if( isset($_SERVER['REQUEST_URI']) && !empty($wp_w3all_forum_folder_wp) && strstr($_SERVER['REQUEST_URI'], $wp_w3all_forum_folder_wp) ){
-        $redirect_to = home_url() . '/' . $wp_w3all_forum_folder_wp;
+			elseif ( !$user->has_cap('edit_posts') OR is_admin() )
+				$redirect_to = $user->has_cap( 'read' ) ? admin_url( 'profile.php' ) : home_url();*/
+      // (try) check if it is a login done via phpBB into WP iframed page AND AVOID redirect to iframe if it is the first time login, so with the addition of the user in WP
+      // or !!duplicate WP insertion in wp will happen!!
+      if( !isset($on_ins) && isset($_SERVER['REQUEST_URI']) && !empty($wp_w3all_forum_folder_wp) && strstr($_SERVER['REQUEST_URI'], $wp_w3all_forum_folder_wp) ){
+          $redirect_to = home_url() . '/' . $wp_w3all_forum_folder_wp; // this will cause duplicated user insert in wp, if phpBB login first time done in phpBB iframed
       }	
+      // AstoSoft - End
 
       if (empty($redirect_to)){
         wp_redirect(home_url()); exit();   
@@ -848,11 +832,11 @@ $last_updated = date('Y-m-d H:i:s');
 
 			wp_redirect( $redirect_to ); exit();
 		}
-
-  wp_redirect(home_url()); exit(); 
+		
+ wp_redirect(home_url()); exit(); 
     
  }
-   
+
     return;
 
  }  // END // HERE INSIDE WE ARE SECURE // END // 
@@ -860,23 +844,6 @@ $last_updated = date('Y-m-d H:i:s');
  return;
     
 }  // END // verify_phpbb_credentials(){ // END //
-
-
-public static function w3_wplogin_after_ins(){
-	 if(defined("WPUSERJUSTINSDATA")){
-     	$user = unserialize(WPUSERJUSTINSDATA);
-     //	$remember = 1;
-     	wp_set_current_user( $user->ID, $user->user_login );
-        wp_set_auth_cookie( $user->ID, 1, is_ssl() );
-        do_action( 'wp_login', $user->user_login, $user );
-    if(isset($_GET["w3allAU"])){
-       $uw = base64_decode(trim($_GET["w3allAU"]));
-      	header("Location: $uw"); /* Redirect to phpBB a coming 'onlogin' for addition */
-     	 exit;
-     }
-      wp_redirect('./'); exit();
-    }
-}
 
 
 private static function last_forums_topics($ntopics = 10){
@@ -1011,7 +978,7 @@ private static function phpBB_user_session_set($wp_user_data){
  	  // to return an error message in wordpress // see function w3all_msgs()
  		setcookie ("w3all_set_cmsg", "phpbb_ban", 0, "/", $w3cookie_domain, false);
  		$wp_user_data = get_user_by( 'login', $phpbb_u->username );    
-	   if($wp_user_data){
+	   if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	    $wpdb->query("UPDATE $wpum_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
      }
     self::w3all_wp_logout('wp_login_url');
@@ -1022,7 +989,7 @@ private static function phpBB_user_session_set($wp_user_data){
 	  // to return an error message in wordpress // see function w3all_msgs()
  		setcookie ("w3all_set_cmsg", "phpbb_deactivated", 0, "/", $w3cookie_domain, false); 
      $wp_user_data = get_user_by( 'login', $phpbb_u->username );
-	  if($wp_user_data){
+	  if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	   $wpdb->query("UPDATE $wpum_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
     }
     self::w3all_wp_logout('wp_login_url');
@@ -1033,7 +1000,7 @@ private static function phpBB_user_session_set($wp_user_data){
          	$phpbb_user_id = $phpbb_u->user_id;	
        }
      
-      if ( $phpbb_u->user_type == 1 ){ // is this user deactivated/banned in phpBB? / logout/and deactivate in WP
+      if ( $phpbb_u->user_type == 1 && isset($wp_user_data->ID) && $wp_user_data->ID > 1 ){ // is this user deactivated/banned in phpBB? / logout/and deactivate in WP
                  //update_user_meta($user_id, 'wp_capabilities', 'a:0:{}'); maybe substitute with this
                   //$wpu_db_utab = $wpdb->prefix . 'usermeta';
 	                $wpu_db_utab = (is_multisite()) ? WPW3ALL_MAIN_DBPREFIX . 'usermeta' : $wpdb->prefix . 'usermeta';
@@ -1074,7 +1041,7 @@ private static function phpBB_user_session_set($wp_user_data){
          $w3phpbb_conn->query("INSERT INTO ".$w3all_config["table_prefix"]."sessions_keys (key_id, user_id, last_ip, last_login) 
           VALUES ('$key_id_sk', '$phpbb_user_id', '$uip', '$time')");
  
-   // --> Brute force related <-- // Clean up phpBB login_attempts and maintain healty array (yeah! should be improved but it is easy to change)
+   // --> Brute force related <-- // Clean up phpBB login_attempts and maintain healty array (should be improved but it is easy to change)
       $w3phpbb_conn->query("DELETE FROM ".$w3all_config["table_prefix"]."login_attempts WHERE user_id = '$phpbb_user_id' AND attempt_browser = '$useragent'");
       if($w3all_anti_brute_force_yn == 1 && !empty($w3all_bruteblock_phpbbulist)){
       	// if more than 3000 records ... maintain healty
@@ -1492,7 +1459,7 @@ public static function wp_w3all_phpbb_logout() {
    // AstoSoft - Start
       //setcookie ("$k", "", time() - 31622400, "/");
  	    //setcookie ("$sid", "", time() - 31622400, "/"); 
- 	    //setcookie ("$u", "", time() - 31622400, "/");
+ 	    //setcookie ("$u", "", time() - 31622400, "/"); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain");
  	    setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain"); 
  	    setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain");  	
@@ -1501,7 +1468,7 @@ public static function wp_w3all_phpbb_logout() {
  	    //setcookie ("$u", "", time() - 31622400, "/", true); 
  	    setcookie ("$k", "", time() - 31622400, "/", "$w3cookie_domain", true);
  	    setcookie ("$sid", "", time() - 31622400, "/", "$w3cookie_domain", true); 
-      setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true);
+      setcookie ("$u", "", time() - 31622400, "/", "$w3cookie_domain", true); 
       // AstoSoft - End
    }
 
@@ -1531,7 +1498,7 @@ public static function phpbb_pass_update($user, $new_pass) {
 
  public static function phpbb_update_profile($user_id, $old_user_data) {
 
-  // AstoSoft
+  // AstoSoft 
   global $wpdb,$w3all_config,$w3all_phpbb_lang_switch_yn,$w3all_add_into_spec_group;
 
      $w3phpbb_conn = self::wp_w3all_phpbb_conn_init();
@@ -1624,7 +1591,7 @@ public static function phpbb_pass_update($user, $new_pass) {
     }
   }
   // AstoSoft - End
-  
+
     // see also function phpbb_verify_credentials(
 
      $u_url = $wpu->user_url;
@@ -1830,7 +1797,7 @@ public static function w3_check_phpbb_profile_wpnu($username){
  	 // to return an error message in wordpress // see function w3all_msgs()
  		setcookie ("w3all_set_cmsg", "phpbb_ban", 0, "/", $w3cookie_domain, false);
  		 $wp_user_data = get_user_by( 'login', $phpbb_user[0]->username );    
-	   if($wp_user_data){
+	   if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	    $wpdb->query("UPDATE $wpum_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
      }
     self::w3all_wp_logout('wp_login_url');
@@ -1841,7 +1808,7 @@ public static function w3_check_phpbb_profile_wpnu($username){
 	  // to return an error message in wordpress // see function w3all_msgs()
  		setcookie ("w3all_set_cmsg", "phpbb_deactivated", 0, "/", $w3cookie_domain, false); 
      $wp_user_data = get_user_by( 'login', $phpbb_user[0]->username );
-	  if($wp_user_data){
+	  if(isset($wp_user_data->ID) && $wp_user_data->ID > 1){
 	   $wpdb->query("UPDATE $wpum_db_utab SET meta_value = 'a:0:{}' WHERE user_id = '$wp_user_data->ID' AND meta_key = 'wp_capabilities'");
     }
     self::w3all_wp_logout('wp_login_url');
@@ -1891,14 +1858,14 @@ if( $phpbb_user[0]->user_type == 0 && empty($user_info->wp_capabilities) ){ // r
          
          $user_username = $phpbb_user[0]->username;
          $user_username = sanitize_user( $user_username, $strict = false );
-          
-         $wpdb->query("UPDATE $wpu_db_utab SET user_login = '".$user_username."', user_nicename = '".$user_username_clean."' WHERE ID = ".$user_id."");
-
+         $user_username = esc_sql($user_username);
+ 
  if( is_wp_error( $user_id ) ){ 
        echo '<h3>Error: '.$user_id->get_error_message().'</h3>' . '<h4><a href="'.get_edit_user_link().'">Return back</a><h4>';
            exit;
     } else {
-    	   $user = get_user_by( 'ID', $user_id );
+    	 $wpdb->query("UPDATE $wpu_db_utab SET user_login = '".$user_username."', user_nicename = '".$user_username_clean."' WHERE ID = ".$user_id."");
+       $user = get_user_by( 'ID', $user_id );
     	   if($user){
           self::phpBB_user_session_set($user);
          }
@@ -1956,16 +1923,14 @@ public static function wp_w3all_phpbb_delete_user ($user_id){
 // TODO: switch to email hash only
  $user = get_user_by( 'ID', $user_id );
  $user->user_login = esc_sql($user->user_login);
- 
+ //echo $user_id;exit;
  $phpbb_udata = self::wp_w3all_get_phpbb_user_info($user->user_login);
  
  $w3phpbb_conn->query("UPDATE ".$w3all_config["table_prefix"]."users SET user_type = '1' WHERE username = '$user->user_login'");
   if(isset($phpbb_udata[0]->user_id)){
    $uuid = $phpbb_udata[0]->user_id;
-   $phpbb_user = $w3phpbb_conn->query("DELETE s.*, sk.* 
-                                      FROM ". $w3all_config["table_prefix"] ."sessions as s, ". $w3all_config["table_prefix"] ."sessions_keys as sk 
-                                      WHERE s.session_user_id = '".$uuid."' 
-                                      AND sk.user_id = s.session_user_id"); 
+   $w3phpbb_conn->query("DELETE FROM ". $w3all_config["table_prefix"] ."sessions WHERE ".$w3all_config["table_prefix"]."sessions.session_user_id = '".$uuid."'"); 
+   $w3phpbb_conn->query("DELETE FROM ". $w3all_config["table_prefix"] ."sessions_keys WHERE ".$w3all_config["table_prefix"]."sessions_keys.user_id = '".$uuid."'"); 
   }
 
 // temp fix for signups remove (if the user had not ativate his account maybe)
@@ -1993,10 +1958,9 @@ public static function wp_w3all_phpbb_delete_user_signup($user_id, $blog_id = ''
   $w3phpbb_conn->query("UPDATE ".$w3all_config["table_prefix"]."users SET user_type = '1' WHERE username = '$user->user_login'");
   if(isset($phpbb_udata[0]->user_id)){
    $uuid = $phpbb_udata[0]->user_id; 
-   $phpbb_user = $w3phpbb_conn->query("DELETE s.*, sk.* 
-                                      FROM ". $w3all_config["table_prefix"] ."sessions as s, ". $w3all_config["table_prefix"] ."sessions_keys as sk 
-                                      WHERE s.session_user_id = '".$uuid."' 
-                                      AND sk.user_id = s.session_user_id"); 
+   $w3phpbb_conn->query("DELETE FROM ". $w3all_config["table_prefix"] ."sessions WHERE ".$w3all_config["table_prefix"]."sessions.session_user_id = '".$uuid."'"); 
+   $w3phpbb_conn->query("DELETE FROM ". $w3all_config["table_prefix"] ."sessions_keys WHERE ".$w3all_config["table_prefix"]."sessions_keys.user_id = '".$uuid."'"); 
+  
   }
 
 if ( is_multisite() ) { // clean also signup of this user if WPMU for compatibility with integration
@@ -2102,8 +2066,6 @@ public static function wp_w3all_custom_iframe_short( $atts ){
 // w3allphpbbupm // wp_w3all_phpBB_u_pm_short vers 1.0 x phpBB PM
 public static function wp_w3all_phpbb_upm_short( $atts ) {
  global $w3all_custom_output_files, $w3all_iframe_phpbb_link_yn, $wp_w3all_forum_folder_wp, $w3all_url_to_cms;
- //obsolete $wp_w3all_forum_folder_wp
- //since on v3 and v4 iframe code, links can also points to real phpBB urls (overall_header code)
  
 if ( defined("W3PHPBBUSESSION") ) {
  $phpbb_user_session = unserialize(W3PHPBBUSESSION);

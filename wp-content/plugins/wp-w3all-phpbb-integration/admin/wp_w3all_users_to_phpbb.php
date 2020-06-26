@@ -2,11 +2,10 @@
   if ( !defined('PHPBB_INSTALLED') ){
    	die("<h2>Wp w3all miss phpBB configuration file: set the correct absolute path to phpBB by opening:<br /><br /> Settings -> WP w3all</h2>");
     } 
-  global $w3all_add_into_spec_group;
+ global $w3all_add_into_spec_group;
  echo'<div><h3>NOTE: you\'re going to insert users into phpBB Group ID -> '.$w3all_add_into_spec_group.' <br />Check that this exists: look into the WP w3all Config Page, and/or you can change this value where related option<br /><i>"Add newly WordPress registered users into a specified phpBB group"</i></h4>';
   $up_conf_w3all_url = admin_url() . 'options-general.php?page=wp-w3all-users-to-phpbb';
  	global $w3all_config,$wpdb;
-  //$phpbb_config = WP_w3all_phpbb::wp_w3all_phpbb_config_init();
   $phpbb_config = unserialize(W3PHPBBCONFIG);
   $default_dateformat = $phpbb_config["default_dateformat"];
   $default_lang = $phpbb_config["default_lang"];
@@ -15,12 +14,7 @@
   $phpbb_config_file = $w3all_config;
   $phpbb_conn = WP_w3all_phpbb::wp_w3all_phpbb_conn_init();
   $phpbb_version = substr($phpbb_config["version"], 0, 3);
-  
-    if(false === strpos($phpbb_version,'3.3')){
-  	$phpbbvers = '32';
-  } else {
-  	$phpbbvers = '33';
-  }
+  $w3all_phpbb_u_with_reg_date = $_POST['w3all_phpbb_u_with_reg_date'] > 0 ? $_POST['w3all_phpbb_u_with_reg_date'] : 0;
   
   if(!isset($_POST["start_select"])){
       $start_select = 0;
@@ -99,19 +93,25 @@ if( $wpu->ID > 1 && !is_email($wpu->user_email) ) {
 if( $wpu->ID > 1 && is_email($wpu->user_email) ){ 
 
        $wplang = isset($wp_lang_x_phpbb) ? strtolower($wp_lang_x_phpbb) : 'en';
-       $phpbb_user_type = ( empty($wpu->roles) ) ? '1' : '0'; // if no capabilities on WP, added as deactivated (1) on phpBB
-       // AstoSoft
-       $wpu->user_registered = strtotime($wpu->user_registered); // as phpBB do
+       $phpbb_user_type = ( empty($wpu->roles) ) ? '1' : '0'; // if no capabilities on WP, added as deactivated
 	     $user_email_hash = sprintf('%u', crc32(strtolower($wpu->user_email))) . strlen($wpu->user_email); // as phpBB do
-       $wpur = $wpu->user_registered;
        $wpul = esc_sql($wpu->user_login);
        $wpunn = esc_sql(strtolower($wpu->user_login));
        $wpup = $wpu->user_pass;
        $wpue = $wpu->user_email;
-       $time = time();
        $uavatar = $avatype = '';
        $wpunc = strtolower($wpul);
        
+       
+    if($w3all_phpbb_u_with_reg_date > 0){   
+       $date = new DateTime($wpu->user_registered);
+       $wpur = $date->getTimestamp();
+       if(empty($wpur)){
+	      $wpur = time();
+       }} else {
+       	$wpur = time();
+       }
+
        $user_exist = $phpbb_conn->get_results("SELECT * FROM ".$phpbb_config_file["table_prefix"]."users WHERE username = '$wpul' OR user_email = '$wpue' AND username != '$wpul'"); 
      
       $nd = 0;
@@ -123,15 +123,25 @@ if( $wpu->ID > 1 && is_email($wpu->user_email) ){
      }
 
   if( $nd == 0  ){
-  	if($phpbbvers == '32'){
+   if($w3all_phpbb_u_with_reg_date != 2){ // updating date
+  	if($phpbb_version == '3.2'){
 		 $phpbb_conn->query("INSERT INTO ".$phpbb_config_file["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_email_hash, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
-      VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','', '$wpur', '$wpul', '$wpunc', '$wpup', '$time', '$wpue', '$user_email_hash', '', '', '', '', '', '', '0', '0', '0', '0', '0', '0', '0', '$wp_lang_x_phpbb', 'Europe/Rome', '$default_dateformat', '1', '$rankID', '$group_color', '0', '0', '0', '0', '-3', '0', '0', 't', 'd', 0, 't', 'a', '0', '1', '0', '1', '1', '1', '1', '230271', '', '', '0', '0', '', '', '', '', '', '', '', '0', '0', '0') ON DUPLICATE KEY UPDATE user_password = '$wpup',user_email = '$wpue',user_email_hash = '$user_email_hash'");
+      VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','', '$wpur', '$wpul', '$wpunc', '$wpup', '0', '$wpue', '$user_email_hash', '', '', '', '', '', '', '0', '0', '0', '0', '0', '0', '0', '$wp_lang_x_phpbb', 'Europe/Rome', '$default_dateformat', '1', '$rankID', '$group_color', '0', '0', '0', '0', '-3', '0', '0', 't', 'd', 0, 't', 'a', '0', '1', '0', '1', '1', '1', '1', '230271', '', '', '0', '0', '', '', '', '', '', '', '', '0', '0', '0') ON DUPLICATE KEY UPDATE user_regdate = '$wpur', user_password = '$wpup',user_email = '$wpue',user_email_hash = '$user_email_hash'");
      }
-    if($phpbbvers == '33'){
+    if($phpbb_version == '3.3'){
 		 $phpbb_conn->query("INSERT INTO ".$phpbb_config_file["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, reset_token, reset_token_expiration, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
-      VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','','$wpur','$wpul','$wpunn','$wpup','0','$wpue','','0','0','0','index.php','','0','0','0','0','0','0','0','$wp_lang_x_phpbb','','d M Y H:i','1','0','$group_color','0','0','0','0','-3','0','0','t','d','0','t','a','0','1','0','1','1','1','1','230271','$uavatar','$avatype','50','50','','','','','','','0','','','0','0','0') ON DUPLICATE KEY UPDATE user_password = '$wpup',user_email = '$wpue',user_email = '$wpue'");
+      VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','','$wpur','$wpul','$wpunn','$wpup','0','$wpue','','0','0','0','index.php','','0','0','0','0','0','0','0','$wp_lang_x_phpbb','','d M Y H:i','1','0','$group_color','0','0','0','0','-3','0','0','t','d','0','t','a','0','1','0','1','1','1','1','230271','$uavatar','$avatype','50','50','','','','','','','0','','','0','0','0') ON DUPLICATE KEY UPDATE user_regdate = '$wpur', user_password = '$wpup',user_email = '$wpue',user_email = '$wpue'");
      }
-     
+    } else { // without updating date
+      if($phpbb_version == '3.2'){
+		   $phpbb_conn->query("INSERT INTO ".$phpbb_config_file["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_email_hash, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
+       VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','', '$wpur', '$wpul', '$wpunc', '$wpup', '0', '$wpue', '$user_email_hash', '', '', '', '', '', '', '0', '0', '0', '0', '0', '0', '0', '$wp_lang_x_phpbb', 'Europe/Rome', '$default_dateformat', '1', '$rankID', '$group_color', '0', '0', '0', '0', '-3', '0', '0', 't', 'd', 0, 't', 'a', '0', '1', '0', '1', '1', '1', '1', '230271', '', '', '0', '0', '', '', '', '', '', '', '', '0', '0', '0') ON DUPLICATE KEY UPDATE user_password = '$wpup',user_email = '$wpue',user_email_hash = '$user_email_hash'");
+      }
+      if($phpbb_version == '3.3'){
+		   $phpbb_conn->query("INSERT INTO ".$phpbb_config_file["table_prefix"]."users (user_id, user_type, group_id, user_permissions, user_perm_from, user_ip, user_regdate, username, username_clean, user_password, user_passchg, user_email, user_birthday, user_lastvisit, user_lastmark, user_lastpost_time, user_lastpage, user_last_confirm_key, user_last_search, user_warnings, user_last_warning, user_login_attempts, user_inactive_reason, user_inactive_time, user_posts, user_lang, user_timezone, user_dateformat, user_style, user_rank, user_colour, user_new_privmsg, user_unread_privmsg, user_last_privmsg, user_message_rules, user_full_folder, user_emailtime, user_topic_show_days, user_topic_sortby_type, user_topic_sortby_dir, user_post_show_days, user_post_sortby_type, user_post_sortby_dir, user_notify, user_notify_pm, user_notify_type, user_allow_pm, user_allow_viewonline, user_allow_viewemail, user_allow_massemail, user_options, user_avatar, user_avatar_type, user_avatar_width, user_avatar_height, user_sig, user_sig_bbcode_uid, user_sig_bbcode_bitfield, user_jabber, user_actkey, reset_token, reset_token_expiration, user_newpasswd, user_form_salt, user_new, user_reminded, user_reminded_time)
+       VALUES ('','$phpbb_user_type','$w3all_add_into_spec_group','','0','','$wpur','$wpul','$wpunn','$wpup','0','$wpue','','0','0','0','index.php','','0','0','0','0','0','0','0','$wp_lang_x_phpbb','','d M Y H:i','1','0','$group_color','0','0','0','0','-3','0','0','t','d','0','t','a','0','1','0','1','1','1','1','230271','$uavatar','$avatype','50','50','','','','','','','0','','','0','0','0') ON DUPLICATE KEY UPDATE user_password = '$wpup',user_email = '$wpue',user_email = '$wpue'");
+      }
+    } 
      
      $phpBBlid = $phpbb_conn->insert_id;
   
@@ -144,7 +154,7 @@ if( $wpu->ID > 1 && is_email($wpu->user_email) ){
 	    echo "<b>Transferred user -> <span style=\"color:green\">". $wpu->user_login ."</span></b><br />";
 
      } else { 
-     	       echo "<b>Overwritten existent user -> <span style=\"color:#f24507\">". $wpu->user_login ."</span></b> (email and password)<br />";
+     	       echo "<b>Overwritten existent user -> <span style=\"color:#f24507\">". $wpu->user_login ."</span></b> (registration date, email and password)<br />";
             }
     }
   }
@@ -172,6 +182,9 @@ if( $wpu->ID > 1 && is_email($wpu->user_email) ){
  <br /><br /><span style="color:red">Note important</span>: if there are users in phpBB using same email address and with different usernames, <span style="color:red">a warning</span> will appear for these users:<br />it is mandatory that you change the email address for these users in phpBB, as indicated on warning (if it show up).<br /><span style="color:red">It is mandatory that in phpBB do NOT exists users sharing the same email address</span> (because it is possible option in phpBB but not in Wordpress).<br />
  <br /><span style="color:red">Note important</span> this example: while transferring 500 users, at record 250 the log report duplicated email/username found: next 250 users on queue will not be transferred, and you'll have to restart the transfer to complete the transfer task or these users will results (obviusly because skipped) not added in WordPress.
  <br />The best way would be to check and adjust these possible old phpBB users created with same email, via phpBB ACP, before to start the transfer process. <br />But the transfer can be restarted any time you like, so you can adjust warnings and repeat the process from begin.
+	<br /><br />
+	Note: this procedure can be used to fix registration date for old transferred WordPress users into phpBB, that may were added with wrong registration date time<br />Just repeat/execute the transfer process, existent users will be overwritten in phpBB with actual email, password and registration date based on selected option
+		
 		</h4>
 
 <form name="w3all_conf_add_users_to_phpbb" id="w3all-conf-add-users-to-phpbb" action="<?php echo esc_url( $up_conf_w3all_url ); ?>" method="POST">
@@ -179,6 +192,10 @@ if( $wpu->ID > 1 && is_email($wpu->user_email) ){
  Transfer <input type="text" name="limit_select" value="20" /> users x time
   <input type="hidden" name="limit_select_prev" value="<?php echo $limit_select; ?>" />
   <input type="hidden" name="start_select" value="<?php echo $start_select;?>" /><br /><br />
+  <input type="radio" name="w3all_phpbb_u_with_reg_date" value="2" checked>Transfer WordpRess users into phpBB <strong>without updating registration date for found existent phpBB users (default)</strong>. Not existent users will be added with the WordPress registration date<br />
+  <input type="radio" name="w3all_phpbb_u_with_reg_date" value="1">Transfer WordpRess users into phpBB updating <strong>with WP user's registration date</strong><br />
+  <input type="radio" name="w3all_phpbb_u_with_reg_date" value="0">Transfer WordpRess users into phpBB updating <strong>with actual (time now)</strong> registration time
+ <br /><br />
 <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo $start_or_continue_msg;?>">
 </p></form></div>
 <hr /><hr />

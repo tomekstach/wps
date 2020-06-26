@@ -20,7 +20,7 @@ $nip24 = new \NIP24\NIP24Client('wRocgSXQIItj', '2PEXnwYwCwVA');
 $nip = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_GET['nip'])));
 $nip_eu = 'PL' . $nip;
 
-$badNIPs = ['9970152873'];
+$badNIPs = ['9970152873','5871506047'];
 
 if (!in_array($nip, $badNIPs)) {
 

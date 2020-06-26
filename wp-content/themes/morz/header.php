@@ -16,14 +16,32 @@
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 
   <?php if (strpos(get_home_url(), 'dealerzy.wapro.pl') > 0):?>
-    <link rel="stylesheet" id="custom-icons-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-icons.css?ver=2.3.2.5" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-icons-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-icons.css?ver=2.3.2.6" type="text/css" media="all" />
     <script src="https://kit.fontawesome.com/7987af0305.js" crossorigin="anonymous"></script>
   <?php endif;?>
 
 	<?php wp_head(); ?>
 
   <?php if (strpos(get_home_url(), 'dealerzy.wapro.pl') > 0):?>
-    <link rel="stylesheet" id="custom-icons13-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-icons13.css?ver=2.3.2.5" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-icons13-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-icons13.css?ver=2.3.2.6" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-additional.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-applications.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-business.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-computer.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-content.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-data-transform.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-education.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-email.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-files.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-ikony-czerwony-pasek.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-location-places.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-messages.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-phones-mobile-smart.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-rewards.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-server.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-shopping.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-transport.css?ver=2.3.2.7" type="text/css" media="all" />
+    <link rel="stylesheet" id="custom-additional-css"  href="https://dealerzy.wapro.pl/wp-content/themes/morz/custom/icons/custom-users.css?ver=2.3.2.7" type="text/css" media="all" />
   <?php endif;?>
 </head>
 <body <?php body_class(); ?>>
