@@ -2033,4 +2033,160 @@ function validatenip($nip) {
   return $valid;
 }
 
+add_action( 'set_user_role', 'custom_user_change_function', 10, 3 );
+
+function custom_user_change_function($user_id, $role, $old_roles) 
+{
+  global $current_blog;
+
+  $headers = [];
+  $headers[] = 'From: WAPRO ERP <kontakt@wapro.pl>';
+  $headers[] = 'Reply-To: serwis.wapro@asscobs.pl';
+  $headers[] = 'Content-Type: text/html; charset=UTF-8';
+
+  if ($current_blog->blog_id == '3' && $role == 'subscriber' && !in_array('subscriber', $old_roles)) {
+    $user_info = get_userdata($user_id);
+    $message = '<body bgcolor="#f7f5f5" style="background-color:#f7f5f5;">
+    <table border="0" cellspacing="0" cellpadding="0" align="center" max-width="600" bgcolor="#fff" style="max-width:600px; background-color:#fff;">
+      <tbody max-width="600" style="max-width:600px;">
+        <tr max-width="600" style="max-width:600px;">
+          <td colspan="3">
+            <table>
+              <tr>
+                <td width="200" style="width:200px;"><img BORDER="0" style="display:block; padding:0; margin:0;" src="http://www.assecobs.pl/storage/mail/stat/logo.png" alt="WAPRO ERP by Asseco" title="WAPRO ERP by Asseco" /></td>
+                <td max-width="400" style="max-width:400px;">
+                  <table>
+                    <tr>
+                      <td width="360" align="right" style="width:360px; text-align:right; font-family:arial; font-size:14px; color:#000; text-decoration:none;">
+                        <a style="font-family:arial; font-size:14px; color:#000; text-decoration:none;" href="http://www.wapro.pl">WAPRO ERP</a> 
+                      </td>
+                      <td width="40" style="width:40px;"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr width="600" style="width:600px;">
+          <td colspan="3"><img BORDER="0" style="display:block; padding:0; margin:0;" src="http://www.assecobs.pl/storage/mail/stat/header-line.png" alt="" title="" /></td>
+        </tr>
+        <tr width="600" style="width:600px;">
+          <td width="40" style="width:40px;"></td>
+          <td width="520" style="width:580px;">
+                    
+
+  <h2 style="font-family:Arial, Helvetica, Verdana, sans-serif;"> Aktywacja konta użytkownika </h2>
+
+
+  <p style="font-size:12px; text-align:left; font-family:Arial, Helvetica, Verdana, sans-serif; margin-right:0px; margin-left:0px;">
+
+  <br>
+  W serwisie WAPRO ERP zostało aktywowane konto dla użytkownika<b> '.$user_info->first_name.' '.$user_info->last_name.' </b> <br><br>
+  Login do konta to: <b>'.$user_info->user_login.'</b><br><br>
+
+  Przydzielono uprawnienia do <b>Portalu dla Parnterów </b><br><br>
+
+  Aby przejść do <b>Portalu dla Partnerów </b>kliknij: <a href="https://partnerzy.wapro.pl/logowanie/" style="color:#d42027;text-decoration:underline;" "><span style="color:#d42027">https://partnerzy.wapro.pl/logowanie/  </span></a><br><br>
+
+  Aby zresetować hasło kliknij: <a href="https://partnerzy.wapro.pl/resetowanie-hasla" style="color:#d42027;text-decoration:underline;" "><span> https://partnerzy.wapro.pl/resetowanie-hasla</span></a><br><br>
+
+  W przypadku pytań prosimy o kontakt na adres email: <br>
+  <a href="mailto:forum.wapro@assecobs.pl" style="color:#d42027;text-decoration:underline;" "><span style=”color:#d42027”> forum.wapro@assecobs.pl </span></a>
+  </p>
+
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="height: 118px">
+                  <strong style="font-family:arial; font-size:14px;">
+                  Z poważaniem,</strong><br />
+                  <span style="font-family:arial; font-size:14px; margin-bottom:20px;"> Administrator portalu<br>
+  Asseco WAPRO ERP
+  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="40" style="width:40px;"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+  ';
+
+    wp_mail($user_info->user_email, 'Aktywacja konta użytkownika', $message, $headers);
+  } elseif ($current_blog->blog_id == '4' && $role == 'subscriber' && !in_array('subscriber', $old_roles)) {
+    $user_info = get_userdata($user_id);
+    $message = '<body bgcolor="#f7f5f5" style="background-color:#f7f5f5;">
+    <table border="0" cellspacing="0" cellpadding="0" align="center" max-width="600" bgcolor="#fff" style="max-width:600px; background-color:#fff;">
+      <tbody max-width="600" style="max-width:600px;">
+        <tr max-width="600" style="max-width:600px;">
+          <td colspan="3">
+            <table>
+              <tr>
+                <td width="200" style="width:200px;"><img BORDER="0" style="display:block; padding:0; margin:0;" src="http://www.assecobs.pl/storage/mail/stat/logo.png" alt="WAPRO ERP by Asseco" title="WAPRO ERP by Asseco" /></td>
+                <td max-width="400" style="max-width:400px;">
+                  <table>
+                    <tr>
+                      <td width="360" align="right" style="width:360px; text-align:right; font-family:arial; font-size:14px; color:#000; text-decoration:none;">
+                        <a style="font-family:arial; font-size:14px; color:#000; text-decoration:none;" href="http://www.wapro.pl">WAPRO ERP</a> 
+                      </td>
+                      <td width="40" style="width:40px;"></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr width="600" style="width:600px;">
+          <td colspan="3"><img BORDER="0" style="display:block; padding:0; margin:0;" src="http://www.assecobs.pl/storage/mail/stat/header-line.png" alt="" title="" /></td>
+        </tr>
+        <tr width="600" style="width:600px;">
+          <td width="40" style="width:40px;"></td>
+          <td width="520" style="width:580px;">
+                    
+  
+  <h2 style="font-family:Arial, Helvetica, Verdana, sans-serif;"> Aktywacja konta użytkownika </h2>
+  
+  
+  <p style="font-size:12px; text-align:left; font-family:Arial, Helvetica, Verdana, sans-serif; margin-right:0px; margin-left:0px;">
+  
+  <br>
+  W serwisie WAPRO ERP zostało aktywowane konto dla użytkownika<b> '.$user_info->first_name.' '.$user_info->last_name.' </b> <br><br>
+  Login do konta to: <b>'.$user_info->user_login.'</b><br><br>
+  
+  Przydzielono uprawnienia do <b>Portalu dla Biur Rachunkowych </b><br><br>
+  
+  Aby przejść do <b>Portalu dla Biur Rachunkowych </b>kliknij: <a href="https://biura.wapro.pl/logowanie/" style="color:#d42027;text-decoration:underline;" "><span style="color:#d42027">https://biura.wapro.pl/logowanie/  </span></a><br><br>
+  
+  Aby zresetować hasło kliknij: <a href="https://biura.wapro.pl/resetowanie-hasla" style="color:#d42027;text-decoration:underline;" "><span> https://biura.wapro.pl/resetowanie-hasla</span></a><br><br>
+  
+  W przypadku pytań prosimy o kontakt na adres email: <br>
+  <a href="mailto:forum.wapro@assecobs.pl" style="color:#d42027;text-decoration:underline;" "><span style=”color:#d42027”> forum.wapro@assecobs.pl </span></a>
+  </p>
+  
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="height: 118px">
+                  <strong style="font-family:arial; font-size:14px;">
+                  Z poważaniem,</strong><br />
+                  <span style="font-family:arial; font-size:14px; margin-bottom:20px;"> Administrator portalu<br>
+  Asseco WAPRO ERP
+  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="40" style="width:40px;"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>  
+  ';
+
+    wp_mail($user_info->user_email, 'Aktywacja konta użytkownika', $message, $headers);
+  }
+}
+
 //add_filter('jetpack_development_mode', '__return_false');
