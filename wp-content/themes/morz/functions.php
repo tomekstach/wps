@@ -584,6 +584,22 @@ add_action("wpcf7_posted_data", "wpcf7_modify_this");
 
 function wpcf7_modify_this($posted_data)
 {
+  $posted_data['abonament'] = 0;
+  $sum1                     = 0;
+  $sum2                     = 0;
+
+  $products_norm    = ['mag', 'fakir', 'kaper', 'gang', 'best', 'aukcje', 'analizy', 'mobile', 'jpk'];
+  $products_biznes  = ['mag'];
+
+  foreach ($products_norm as $product) {
+    $sum1 += intval($posted_data['number-'.$product]);
+  }
+
+  foreach ($products_biznes as $product) {
+    $sum2 += intval($posted_data['number-'.$product.'-biznes']);
+  }
+
+  $posted_data['abonament'] = ($sum1 * 159) + ($sum2 * 129);
 
   if (array_key_exists('posiada-online', $posted_data)) {
     if ($posted_data['posiada-online'][0] == "") {
@@ -594,34 +610,30 @@ function wpcf7_modify_this($posted_data)
   }
 
   if (array_key_exists('checkbox-serwis-biznes', $posted_data)) {
-    if ($posted_data['checkbox-serwis-biznes'][0] == "") {
-      $posted_data['checkbox-serwis-biznes'][0] = "";
-    } else {
+    if ($posted_data['checkbox-serwis-biznes'][0] != "") {
       $posted_data['checkbox-serwis-biznes'][0] = "wariant Biznes";
+      $posted_data['abonament'] += 549;
     }
   }
 
   if (array_key_exists('checkbox-serwis-prestiz', $posted_data)) {
-    if ($posted_data['checkbox-serwis-prestiz'][0] == "") {
-      $posted_data['checkbox-serwis-prestiz'][0] = "";
-    } else {
+    if ($posted_data['checkbox-serwis-prestiz'][0] != "") {
       $posted_data['checkbox-serwis-prestiz'][0] = "wariant Prestiż";
+      $posted_data['abonament'] += 699;
     }
   }
 
   if (array_key_exists('checkbox-backup-podst', $posted_data)) {
-    if ($posted_data['checkbox-backup-podst'][0] == "") {
-      $posted_data['checkbox-backup-podst'][0] = "";
-    } else {
+    if ($posted_data['checkbox-backup-podst'][0] != "") {
       $posted_data['checkbox-backup-podst'][0] = "wariant Podstawowy";
+      $posted_data['abonament'] += 49;
     }
   }
 
   if (array_key_exists('checkbox-backup-rozsz', $posted_data)) {
-    if ($posted_data['checkbox-backup-rozsz'][0] == "") {
-      $posted_data['checkbox-backup-rozsz'][0] = "";
-    } else {
+    if ($posted_data['checkbox-backup-rozsz'][0] != "") {
       $posted_data['checkbox-backup-rozsz'][0] = "wariant Rozszerzony";
+      $posted_data['abonament'] += 99;
     }
   }
 
