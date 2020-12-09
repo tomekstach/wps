@@ -4,6 +4,7 @@ jQuery(document).ready(function($) {
 
     $("#loader-content").show();
     $("#rodo-content").hide();
+    $('.cf7-tab-1 .multistep-cf7-next').removeClass('hidden');
 
     // Remove all characters which are not digits
     var nipVal = $('#input-nip').val();

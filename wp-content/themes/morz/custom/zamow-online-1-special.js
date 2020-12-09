@@ -96,5 +96,17 @@ jQuery(document).ready(function($) {
     } else {
       $('.wpcf7-jpk-needed').hide();
     }
+    
+    if ($('#number-mobile-mag').val() > 0 && $('#number-mag').val() == 0 && $('#number-mag-biznes').val() == 0 && !$('.posiada-online input').is(':checked')) {
+      $('.wpcf7-mobile-mag-needed').show();
+    } else {
+      $('.wpcf7-mobile-mag-needed').hide();
+    }
+
+    if ($('#number-mobile-st').val() > 0 && $('#number-best').val() == 0 && !$('.posiada-online input').is(':checked')) {
+      $('.wpcf7-mobile-st-needed').show();
+    } else {
+      $('.wpcf7-mobile-st-needed').hide();
+    }
   }
 });

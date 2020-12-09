@@ -1,0 +1,123 @@
+div.wpcf7 .wpcf7-text {
+  font-weight: 300;
+  font-size: 14px;
+}
+
+div.wpcf7 input[type=text],
+div.wpcf7 input[type=email],
+div.wpcf7 input[type=tel],
+div.wpcf7 input[type=password],
+div.wpcf7 textarea,
+div.wpcf7 select {
+  font-family: var(--vamtam-primary-font-font-family);
+  padding-left: 15px !important;
+}
+
+.br-obszar-dzialania .wpcf7-form-control.wpcf7-checkbox,
+.br-rodzaj-biura .wpcf7-form-control.wpcf7-checkbox,
+.br-zakres-uslug .wpcf7-form-control.wpcf7-checkbox,
+.br-zakres-uslug-online .wpcf7-form-control.wpcf7-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.br-obszar-dzialania .wpcf7-list-item {
+  flex: 1 0 21%;
+  margin: 5px;
+  height: 30px;
+}
+
+.br-rodzaj-biura .wpcf7-list-item,
+.br-zakres-uslug-online .wpcf7-list-item {
+  flex: 1 0 17%;
+  margin: 5px;
+  height: 30px;
+}
+
+.br-zakres-uslug .wpcf7-list-item {
+  flex: 1 0 31%;
+  margin: 5px;
+  height: 30px;
+}
+
+.nip-container {
+  margin-bottom: 35px;
+}
+
+.wpcf7-password::placeholder {
+  color: #999999;
+}
+
+#main .wpcf7-response-output {
+  border-style: solid;
+  border-width: 0;
+  background-clip: padding-box;
+  border-color: #e85656;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-top: 15px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  background-color: #f9c8c7;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e85656;
+  display: none;
+  margin: 20px 0 0 0;
+}
+
+
+/* Edge */
+
+.wpcf7-password::-webkit-input-placeholder {
+  color: #999999;
+}
+
+
+/* Internet Explorer 10-11 */
+
+.wpcf7-password:-ms-input-placeholder {
+  color: #999999;
+}
+
+@media screen and (max-width: 992px) {
+  .br-obszar-dzialania .wpcf7-list-item,
+  .br-rodzaj-biura .wpcf7-list-item,
+  .br-zakres-uslug .wpcf7-list-item,
+  .br-zakres-uslug-online .wpcf7-list-item {
+    width: 100%;
+    float: none;
+  }
+}
+
+.wpcf7-warning {
+  border-style: solid;
+  border-width: 0;
+  background-clip: padding-box;
+  border-color: #e85656;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding-top: 15px;
+  padding-right: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  background-color: #f9c8c7;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e85656;
+  display: none;
+  margin: 20px 0 0;
+}

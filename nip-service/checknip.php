@@ -53,7 +53,7 @@ if (!in_array($nip, $badNIPs)) {
         $data->address .= '/' . $all->houseNumber;
       }
 
-      $data->city       = $all->postCity;
+      $data->city       = $all->postCity != '' ? $all->postCity : $all->city;
       if ($all->postCode) {
         $data->postCode   = substr($all->postCode, 0, 2) . '-' . substr($all->postCode, -3);
       } else {

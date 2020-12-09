@@ -1,0 +1,63 @@
+.badges .fl-col {
+  width: 25%;
+}
+
+.badges .vamtam-show-bg-image.badge {
+  padding: 10px 20px;
+  margin: 0 10px 30px 10px;
+  box-shadow: 4px 4px 15px 0px #f2f2f2;
+}
+
+.badges .special .vamtam-show-bg-image.badge {
+  background: var(--vamtam-accent-color-1);
+}
+
+.badge-year .fl-module-content {
+  margin-top: 0;
+  margin-bottom: -10px;
+  margin-left: 15px;
+}
+
+.badge-year .fl-module-content p {
+  font-size: 16px;
+}
+
+.badges .badge-icon {
+  width: 25%;
+}
+
+.badges .badge-text {
+  width: 75%;
+}
+
+.badges .fl-module-content .fl-icon i {
+  font-size: 40px;
+  color: #f2f2f2;
+}
+
+.badge-icon .fl-module-content {
+  margin-top: -3px;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-left: 15px;
+}
+
+.badge-text .fl-module-content {
+  margin-top: -10px;
+  margin-bottom: 0;
+  margin-left: 20px;
+}
+
+.badge-text .fl-module-content p {
+  font-weight: bold;
+}
+
+.badge-text .fl-module-content p span {
+  color: #d42027;
+}
+
+.special .badge-text .fl-module-content p,
+.special .badge-text .fl-module-content p span,
+.special .badge-year .fl-module-content p {
+  color: #f2f2f2;
+}
