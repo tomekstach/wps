@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-  if (!$('.cf7-steps-1 .fl-icon-wrap').length) {
+  /*if (!$('.cf7-steps-1 .fl-icon-wrap').length) {
     $('.cf7-steps-1').prepend('<span class="fl-icon-wrap"><span class="fl-icon"><i class="ssui-icon ssui-icon--Zasb-291"></i><br></span></span>');
   }
 
@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
 
   if (!$('.cf7-steps-4 .fl-icon-wrap').length) {
     $('.cf7-steps-4').prepend('<span class="fl-icon-wrap"><span class="fl-icon"><i class="ssui-icon ssui-icon--Zasb-293"></i><br></span></span>');
-  }
+  }*/
 
   $('#input-nazwa-firmy').prop('readonly', true);
 
