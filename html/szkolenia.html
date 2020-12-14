@@ -1,0 +1,87 @@
+<script type="text/javascript">
+  jQuery(document).ready(function ($) {
+    var autoryzacjeText = '[acf field="dl_autoryzacje"]';
+
+    var autoryzacje = autoryzacjeText.split('|');
+    var autoryzacjeHTML = '';
+    var autoryzacjeData = [];
+    var emptyCell = '<div class="fl-col fl-col-small"><div class="fl-col-content fl-node-content vamtam-show-bg-image"></div></div>';
+
+    console.log(autoryzacje.length);
+
+    for (var i = 0; i < autoryzacje.length; i++) {
+      autoryzacjeData = autoryzacje[i].split(';');
+      if (i % 4 == 0) {
+        if (i > 0) {
+          autoryzacjeHTML += '</div>';
+        }
+        autoryzacjeHTML += '<div class="fl-col-group fl-col-group-equal-height fl-col-group-align-top fl-col-group-custom-width badges">';
+      }
+      autoryzacjeHTML += '<div class="fl-col fl-col-small fl-col-has-cols ' + autoryzacjeData[2] + '"><div class="fl-col-content fl-node-content vamtam-show-bg-image badge"><div class="fl-module fl-module-rich-text badge-year"><div class="fl-module-content fl-node-content"><div class="fl-rich-text"><p>' + autoryzacjeData[0] + '</p></div></div></div><div class="fl-col-group fl-col-group-nested fl-col-group-equal-height fl-col-group-align-top"><div class="fl-col fl-col-small badge-icon"><div class="fl-col-content fl-node-content vamtam-show-bg-image"><div class="fl-module fl-module-vamtam-icon"><div class="fl-module-content fl-node-content"> <span class="fl-icon-wrap"> <span class="fl-icon"><i class="gsui-icon gsui-icon--rewards-medal-5 "></i> </span> </span></div></div></div></div><div class="fl-col badge-text"><div class="fl-col-content fl-node-content vamtam-show-bg-image"><div class="fl-module fl-module-rich-text "><div class="fl-module-content fl-node-content"><div class="fl-rich-text"><p>' + autoryzacjeData[1] + '</p></div></div></div></div></div></div></div></div>';
+    }
+    while (i % 4 > 0) {
+      autoryzacjeHTML += emptyCell;
+      i++;
+    }
+    autoryzacjeHTML += '</div>';
+
+    $('#badges-container').html(autoryzacjeHTML);
+  });
+</script>
+<div id="badges-container"></div>
+<style>
+  .badges .fl-col {
+    width: 25%;
+  }
+
+  .badges .vamtam-show-bg-image.badge {
+    padding: 10px 20px;
+    margin: 0 10px 30px 10px;
+    box-shadow: 4px 4px 15px 0px #f2f2f2;
+  }
+
+  .badge-year .fl-module-content {
+    margin-top: 0;
+    margin-bottom: -10px;
+    margin-left: 15px;
+  }
+
+  .badge-year .fl-module-content p {
+    font-size: 16px;
+  }
+
+  .badges .badge-icon {
+    width: 25%;
+  }
+
+  .badges .badge-text {
+    width: 75%;
+  }
+
+  .badges .fl-module-content .fl-icon i {
+    font-size: 40px;
+    color: #f2f2f2;
+  }
+
+  .badge-icon .fl-module-content {
+    margin-top: -3px;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 15px;
+  }
+
+  .badge-text .fl-module-content {
+    margin-top: -10px;
+    margin-bottom: 0;
+    margin-left: 20px;
+  }
+
+  .badge-text .fl-module-content p {
+    font-weight: bold;
+  }
+
+  .badge-text .fl-module-content p span {
+    color: #d42027;
+    ;
+  }
+</style>

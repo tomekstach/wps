@@ -1,0 +1,44 @@
+/*
+Theme Name: Morz Child
+Author: VamTam
+Author URI: https://vamtam.com
+Template: morz
+*/
+
+
+
+/*
+
+put your child theme styles here
+
+
+you don't need any @import rules
+
+*/
+
+@font-face {
+  font-family: "geomanist medium";
+  src: url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-medium-webfont.eot");
+  src:
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-medium-webfont.woff") format("woff"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-medium-webfont.ttf") format("truetype"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-medium-webfont.svg#filename") format("svg");
+}
+
+@font-face {
+  font-family: "geomanist regular";
+  src: url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-regular-webfont.eot");
+  src:
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-regular-webfont.woff") format("woff"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-regular-webfont.ttf") format("truetype"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-regular-webfont.svg#filename") format("svg");
+}
+
+@font-face {
+  font-family: "geomanist book";
+  src: url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-book-webfont.eot");
+  src:
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-book-webfont.woff") format("woff"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-book-webfont.ttf") format("truetype"),
+    url("https://wpdev.wapro.pl/wp-content/uploads/fonts/geomanist-book-webfont.svg#filename") format("svg");
+}

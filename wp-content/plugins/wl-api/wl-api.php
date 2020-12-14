@@ -491,6 +491,275 @@ function wl_get_contracts()
   return $list;
 }
 
+/**
+ * WP Custom REST API method to get list of Umowa Serwisowa
+ *
+ * @return object
+ */
+function wl_get_biuro_firm()
+{
+  $current_user = wp_get_current_user();
+
+  $dane_firmy   = get_field('dane_firmy', 'user_' . $current_user->ID);
+
+  if (is_object($dane_firmy)) {
+    $dane_firmy->admin = '1';
+  } else {
+    $lokalizacje   = get_field('br_lokalizacje', 'user_' . $current_user->ID);
+    if (is_array($lokalizacje)) {
+      $lokalizacja_id = intval($lokalizacje[0]);
+    } else {
+      $lokalizacja_id = intval($lokalizacje);
+    }
+      
+    // query args
+    $args = array(
+      'numberposts'   => -1,
+      'post_status'   => array('publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash'), 
+      'post_type'     => 'dane_firmy',
+      'meta_query'	  => array(
+        array(
+          'key'		    => 'df_lokalizacje',
+          'value'		  => $lokalizacja_id,
+          'compare'	  => 'LIKE'
+        )
+      )
+    );
+
+    // query
+    $firma   = get_posts($args);
+    
+    if (is_object($firma[0])) {
+      $dane_firmy = $firma[0];
+      $dane_firmy->admin = '0';
+    }
+  }
+
+  if (is_object($dane_firmy)) {
+    // Get all data
+    $dane_firmy->nazwa_firmy    = get_field('df_nazwa', 'post_' . $dane_firmy->ID);
+    $dane_firmy->NIP            = get_field('df_nip', 'post_' . $dane_firmy->ID);
+    $dane_firmy->adres          = get_field('df_adres', 'post_' . $dane_firmy->ID);
+    $dane_firmy->kod_pocztowy   = get_field('df_kod_pocztowy', 'post_' . $dane_firmy->ID);
+    $dane_firmy->miasto         = get_field('df_miasto', 'post_' . $dane_firmy->ID);
+    $dane_firmy->wojewodztwo    = get_field('df_wojewodztwo', 'post_' . $dane_firmy->ID);
+    $dane_firmy->email          = get_field('df_email', 'post_' . $dane_firmy->ID);
+    $dane_firmy->testowe_konto  = get_field('df_testowe_konto_parnera', 'post_' . $dane_firmy->ID);
+    $dane_firmy->imie           = get_field('df_imie', 'post_' . $dane_firmy->ID);
+    $dane_firmy->nazwisko       = get_field('df_nazwisko', 'post_' . $dane_firmy->ID);
+    $dane_firmy->telefon        = get_field('df_telefon', 'post_' . $dane_firmy->ID);
+    $dane_firmy->fax            = get_field('df_fax', 'post_' . $dane_firmy->ID);
+    $dane_firmy->www            = get_field('df_www', 'post_' . $dane_firmy->ID);
+    $dane_firmy->k_adres        = get_field('df_k_adres', 'post_' . $dane_firmy->ID);
+    $dane_firmy->k_kod_pocztowy = get_field('df_k_kod_pocztowy', 'post_' . $dane_firmy->ID);
+    $dane_firmy->k_miasto       = get_field('df_k_miasto', 'post_' . $dane_firmy->ID);
+    $dane_firmy->k_telefon      = get_field('df_k_telefon', 'post_' . $dane_firmy->ID);
+  } else {
+    $dane_firmy = new \stdClass;
+    $dane_firmy->admin = '0';
+  }
+
+  $dane_firmy->user_id        = $current_user->ID;
+
+  return $dane_firmy;
+}
+
+/**
+ * WP Custom REST API method to get list of locations
+ *
+ * @return object
+ */
+function wl_get_locations()
+{
+  $current_user = wp_get_current_user();
+
+  $list = [];
+
+  if ($current_user->ID) {
+    // get locations
+    $lokalizacje = get_field('br_lokalizacje', 'user_'.$current_user->ID);
+
+    if (is_array($lokalizacje)) {
+        $lokalizacja_id = intval($lokalizacje[0]);
+    } elseif (intval($lokalizacje) > 0) {
+        $lokalizacja_id = intval($lokalizacje);
+    }
+
+    if ($lokalizacja_id > 0) {
+      // query args
+      $args = array(
+        'numberposts'   => -1,
+        'post_status'   => array('publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash'),
+        'post_type'     => 'dane_firmy',
+        'meta_query'	  => array(
+          array(
+            'key'		    => 'df_lokalizacje',
+            'value'		  => $lokalizacja_id,
+            'compare'	  => 'LIKE'
+          )
+        )
+      );
+
+      // query
+      $firma   = get_posts($args);
+
+      if (is_object($firma[0])) {
+        // get locations
+        $loks = get_field('df_lokalizacje', 'post_'.$firma[0]->ID);
+
+        foreach ($loks as $lok) {
+          $location = get_post($lok);
+          $location->adres        = get_field('br_adres', 'post_'.$lok);
+          $location->kod_pocztowy = get_field('br_kod_pocztowy', 'post_'.$lok);
+          $location->miejscowosc  = get_field('br_miasto', 'post_'.$lok);
+          $location->wojewodztwo  = get_field('br_wojewodztwo', 'post_'.$lok);
+          $location->biuro_online = get_field('br_online', 'post_'.$lok) ? 'TAK' : 'NIE';
+          $list[] = $location;
+        }
+      }
+    }
+  }
+
+  return $list;
+}
+
+/**
+ * WP Custom REST API method to get data of location
+ *
+ * @return object
+ */
+function wl_get_location()
+{
+  $current_user = wp_get_current_user();
+  $lokalizacja_id  = intval($_POST['loc']);
+
+  if ($current_user->ID) {
+    // get locations
+    $lokalizacje = get_field('br_lokalizacje', 'user_'.$current_user->ID);
+    $admin_lokalizacje = get_field('br_admin_lokalizacje', 'user_'.$current_user->ID);
+    $biuro_user = get_field('dane_firmy', 'user_'.$current_user->ID);
+
+    if (is_array($lokalizacje)) {
+      if (!in_array($lokalizacja_id, $lokalizacje)) {
+        return false;
+      }
+    } else {
+      if ($lokalizacja_id != $lokalizacje) {
+        return false;
+      }
+    }
+      
+    $lokalizacja = get_post($lokalizacja_id);
+
+    $lokalizacja->admin = '0';
+
+    if (is_array($admin_lokalizacje)) {
+      if (in_array($lokalizacja_id, $admin_lokalizacje)) {
+        $lokalizacja->admin = '1';
+      }
+    } else {
+      if ($lokalizacja_id == $admin_lokalizacje) {
+        $lokalizacja->admin = '1';
+      }
+    }
+
+    if (is_object($biuro_user)) {
+      $biuro_lokalizacje = get_field('df_lokalizacje', 'post_'.$biuro_user->ID);
+
+      if (is_array($biuro_lokalizacje)) {
+        if (in_array($lokalizacja_id, $biuro_lokalizacje)) {
+          $lokalizacja->admin = '1';
+        }
+      } else {
+        if ($lokalizacja_id == $biuro_lokalizacje) {
+          $lokalizacja->admin = '1';
+        }
+      }
+    }
+
+    if ($lokalizacja != null) {
+
+      // Get all data
+      $lokalizacja->obszar_dzialania = get_field('br_obszar_dzialania', 'post_' . $lokalizacja_id);
+      $lokalizacja->adres          = get_field('br_adres', 'post_' . $lokalizacja_id);
+      $lokalizacja->kod_pocztowy   = get_field('br_kod_pocztowy', 'post_' . $lokalizacja_id);
+      $lokalizacja->miasto         = get_field('br_miasto', 'post_' . $lokalizacja_id);
+      $lokalizacja->wojewodztwo    = get_field('br_wojewodztwo', 'post_' . $lokalizacja_id);
+      $lokalizacja->email          = get_field('br_email', 'post_' . $lokalizacja_id);
+      $lokalizacja->telefon        = get_field('br_telefon', 'post_' . $lokalizacja_id);
+      $lokalizacja->fax            = get_field('br_fax', 'post_' . $lokalizacja_id);
+      $lokalizacja->www            = get_field('br_www', 'post_' . $lokalizacja_id);
+      $lokalizacja->online         = get_field('br_online', 'post_' . $lokalizacja_id);
+      $lokalizacja->rodzaj_biura   = get_field('br_rodzaj_biura', 'post_' . $lokalizacja_id);
+      $lokalizacja->zakres_uslug   = get_field('br_zakres_uslug', 'post_' . $lokalizacja_id);
+      $lokalizacja->zakres_uslug_online = get_field('br_zakres_uslug_online', 'post_' . $lokalizacja_id);
+      $lokalizacja->dodatkowy_opis = get_field('br_dodatkowy_opis', 'post_' . $lokalizacja_id);
+
+      // Get location's staff
+      // query args
+      $args = array(
+        'meta_query'	  => array(
+          'relation' => 'OR',
+          array(
+            'key'		    => 'br_lokalizacje',
+            'value'		  => $lokalizacja_id,
+            'compare'	  => 'LIKE'
+          )
+        )
+      );
+
+      // query
+      $user_query         = new WP_User_Query($args);
+
+      $workers = [];
+      $staff = $user_query->get_results();
+
+      foreach ($staff as $item) {
+        $worker = new \stdClass;
+        $worker->ID         = $item->ID;
+        $worker->first_name = get_user_meta($item->ID, 'first_name')[0];
+        $worker->last_name  = get_user_meta($item->ID, 'last_name')[0];
+        $worker->username   = $item->data->user_login;
+        $worker->email      = $item->data->user_email;
+        $workers[] = $worker;
+      }
+
+      $lokalizacja->workers = $workers;
+
+      // Get location's clients
+      $clients = get_field('br_klienci', 'post_'.$lokalizacja_id);
+
+      if (!is_array($clients)) {
+        if ($clients != null) {
+          $clients = [$clients];
+        } else {
+          $clients = [];
+        }
+      }
+
+      foreach ($clients as $key => $item) {
+        $client = new \stdClass;
+        $client->ID = $item;
+        $client->nazwa_firmy  = get_field('cli_nazwa_firmy', 'post_'.$item);
+        $client->nip          = get_field('cli_nip', 'post_'.$item);
+        $client->email        = get_field('cli_email', 'post_'.$item);
+        $client->adres        = get_field('cli_adres', 'post_'.$item);
+        $client->kod_pocztowy = get_field('cli_kod_pocztowy', 'post_'.$item);
+        $client->miasto       = get_field('cli_miasto', 'post_'.$item);
+        $client->wojewodztwo  = get_field('cli_wojewodztwo', 'post_'.$item);
+        $clients[$key] = $client;
+      }
+
+      $lokalizacja->clients = $clients;
+      $lokalizacja->user_id = $current_user->ID;
+    }
+  } else {
+    $lokalizacja = null;
+  }
+
+  return $lokalizacja;
+}
+
 add_action('rest_api_init', function () {
   register_rest_route('wl/v1', 'user', [
     'methods' => 'POST',
@@ -523,5 +792,26 @@ add_action('rest_api_init', function () {
   register_rest_route('wl/v1', 'getRodoContract', [
     'methods' => 'POST',
     'callback' => 'wl_get_rodo'
+  ]);
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('wl/v1', 'getBiuroFirm', [
+    'methods' => 'POST',
+    'callback' => 'wl_get_biuro_firm'
+  ]);
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('wl/v1', 'getLocations', [
+    'methods' => 'POST',
+    'callback' => 'wl_get_locations'
+  ]);
+});
+
+add_action('rest_api_init', function () {
+  register_rest_route('wl/v1', 'getLocation', [
+    'methods' => 'POST',
+    'callback' => 'wl_get_location'
   ]);
 });
