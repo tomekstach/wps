@@ -1,0 +1,161 @@
+.fl-node-5d89ee0ac4155,
+.fl-node-5d89ee0ac41a2, 
+.fl-node-5d89ee0ac41ee, 
+.fl-node-5d89ee0ac4238, 
+.fl-node-5d89ee0ac4284 {
+	width: 20%;
+}
+@media(max-width: 768px) {
+	.fl-builder-content .fl-node-5d89ee0ac4155,
+	.fl-builder-content .fl-node-5d89ee0ac41a2, 
+	.fl-builder-content .fl-node-5d89ee0ac41ee, 
+	.fl-builder-content .fl-node-5d89ee0ac4238, 
+	.fl-builder-content .fl-node-5d89ee0ac4284 {
+		width: 50% !important;
+		max-width: none;
+		clear: none;
+		float: left;
+	}
+}
+
+.fl-number,
+.fl-number .fl-number-circle-container {
+	margin: 0 auto;
+}
+
+.fl-number-before-text,
+.fl-number-after-text {
+	display: block;
+}
+.fl-number-before-text { margin-bottom: 10px; }
+.fl-number-after-text { margin-top: 10px; }
+.fl-number-string {
+	line-height: 1;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.fl-number .fl-number-text,
+.fl-number .fl-number-circle-container {
+	position: relative;
+	z-index: 10;
+	text-align: center;
+}
+
+.fl-number.fl-number-bars .fl-number-text { text-align: left; }
+.fl-number .fl-number-bar {
+	text-align: right;
+	padding: 5px;
+	transform: scaleX( 0 );
+	transform-origin: center left;
+	transition: transform .3s ease-out;
+	will-change: transform;
+}
+
+.fl-number .fl-number-bar-container {
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+}
+
+.fl-number .fl-number-position-above .fl-number-bar {
+	margin-top: 5px;
+}
+.fl-number .fl-number-position-below .fl-number-bar {
+	margin-bottom: 5px;
+}
+.fl-number .fl-number-position-default .fl-number-bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+.fl-number .fl-number-position-default .fl-number-string {
+	will-change: transform;
+	transform: translateX( -100% );
+	text-align: right;
+	position: relative;
+	padding: 5px;
+}
+
+
+.fl-number .svg-container {
+	display: inline-block;
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: auto;
+	padding-bottom: 100%;
+}
+
+.fl-number .svg-container .svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.fl-number .svg-container .fl-bar {
+	transition: stroke-dashoffset 1s ease-out;
+	will-change: stroke-dashoffset;
+}
+
+.fl-node-5d89ee0ac40c6 .fl-number-string,
+.fl-node-5d89ee0ac42ce .fl-number-string, 
+.fl-node-5d89ee0ac431b .fl-number-string, 
+.fl-node-5d89ee0ac4366 .fl-number-string, 
+.fl-node-5d89ee0ac43b2 .fl-number-string {
+	font-size: 32px;	
+}
+
+.fl-node-5d89ee0ac40c6 .fl-module-content .fl-number-before-text,
+.fl-node-5d89ee0ac40c6 .fl-module-content .fl-number-after-text, 
+.fl-node-5d89ee0ac42ce .fl-module-content .fl-number-before-text,
+.fl-node-5d89ee0ac42ce .fl-module-content .fl-number-after-text, 
+.fl-node-5d89ee0ac431b .fl-module-content .fl-number-before-text,
+.fl-node-5d89ee0ac431b .fl-module-content .fl-number-after-text, 
+.fl-node-5d89ee0ac4366 .fl-module-content .fl-number-before-text,
+.fl-node-5d89ee0ac4366 .fl-module-content .fl-number-after-text, 
+.fl-node-5d89ee0ac43b2 .fl-module-content .fl-number-before-text,
+.fl-node-5d89ee0ac43b2 .fl-module-content .fl-number-after-text {
+	color: #d42027;
+}
+
+
+.fl-node-5d89ee0ac40c6 .fl-number-text, 
+.fl-node-5d89ee0ac42ce .fl-number-text, 
+.fl-node-5d89ee0ac431b .fl-number-text, 
+.fl-node-5d89ee0ac4366 .fl-number-text, 
+.fl-node-5d89ee0ac43b2 .fl-number-text {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+
+	
+.fl-node-5d89ee0ac40c6 .fl-number-circle-container, 
+.fl-node-5d89ee0ac42ce .fl-number-circle-container, 
+.fl-node-5d89ee0ac431b .fl-number-circle-container, 
+.fl-node-5d89ee0ac4366 .fl-number-circle-container, 
+.fl-node-5d89ee0ac43b2 .fl-number-circle-container {
+	max-width: 150px;max-height: 150px;	
+}
+
+.fl-node-5d89ee0ac40c6 .svg circle, 
+.fl-node-5d89ee0ac42ce .svg circle, 
+.fl-node-5d89ee0ac431b .svg circle, 
+.fl-node-5d89ee0ac4366 .svg circle, 
+.fl-node-5d89ee0ac43b2 .svg circle {
+	stroke-width: 10px;
+}
+.fl-node-5d89ee0ac4493.fl-module-vamtam-heading .vamtam-heading, 
+.fl-node-5d89ee0ac4448.fl-module-vamtam-heading .vamtam-heading, 
+.fl-node-5d89ee0ac4521.fl-module-vamtam-heading .vamtam-heading, 
+.fl-node-5d89ee0ac44de.fl-module-vamtam-heading .vamtam-heading, 
+.fl-node-5d89ee0ac456c.fl-module-vamtam-heading .vamtam-heading {
+	text-align: center;
+    justify-content: center;
+}
