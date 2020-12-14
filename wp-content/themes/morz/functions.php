@@ -1109,7 +1109,7 @@ function custom_archive_checkbox_validation_filter($result, $tag)
   return $result;
 }
 
-add_action('wpcf7_mail_sent', 'after_sent_mail');
+add_action('wpcf7_mail_sent', 'after_sent_mail', 9);
 
 /**
  * Everything which shlould be done after the cf7 will send an email.
@@ -1120,6 +1120,8 @@ add_action('wpcf7_mail_sent', 'after_sent_mail');
 function after_sent_mail($cf7)
 {
   global $wpdb;
+
+  error_log(date('Y-m-d H:i:s') . " functions: after_sent_mail \n", 3, '/home/wapro/www/wapro.pl/htdocs/logs/my-errors.log');
 
   // Run code after the email has been sent
   $wpcf7 = WPCF7_ContactForm::get_current();
