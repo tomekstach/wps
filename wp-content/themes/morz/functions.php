@@ -784,8 +784,8 @@ function custom_archive_text_validation_filter($result, $tag)
           if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
             $result->invalidate($tag, $nip24->getLastError());
           } else {
-            //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-            $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+            $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+            //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
             $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -866,8 +866,8 @@ function custom_text_validation_filter($result, $tag)
             if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
               $result->invalidate($tag, $nip24->getLastError());
             } else {
-              //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-              $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+              $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+              //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
               $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -2310,7 +2310,7 @@ function after_sent_mail($cf7)
 
     // Korzystaj online form
     if ($_POST['_wpcf7'] == '35288' or $_POST['_wpcf7'] == '52001') {
-      /*global $current_user;
+      global $current_user;
       $current_user = wp_get_current_user();
       $nip  = $data['yl-nip'];
 
@@ -2370,7 +2370,7 @@ function after_sent_mail($cf7)
         'ZgodaSMS' => 'N',
         'ZgodaKontaktKonsult' => 'N'
       ]]];
-      $response = $client->HostingCustomerCreate($paramsCreateCustomer);*/
+      $response = $client->HostingCustomerCreate($paramsCreateCustomer);
     }
 
     // RODO first step form
@@ -2487,8 +2487,8 @@ function after_sent_mail($cf7)
       $attachments = array(WP_CONTENT_DIR . '/uploads/2019/10/Umowa_powierzenia_przetwarzania_danych_osobowych.pdf');
 
       // SEND RODO CONTRACT TO ERP
-      //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-      $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+      $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+      //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
       $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 

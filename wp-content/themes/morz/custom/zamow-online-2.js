@@ -66,7 +66,9 @@ jQuery(document).ready(function($) {
   });
 
   $('#get-nip-online').click(function(e) {
+    console.log('Test!!!');
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
+      console.log('Invalid!!!');
       $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
       $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
       return false;

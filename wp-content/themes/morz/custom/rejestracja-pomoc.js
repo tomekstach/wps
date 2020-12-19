@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 
   $("#password-field").attr("placeholder", "Hasło*");
 
-  $('#get-nip-1').click(function(e) {
+  $('#get-nip-pomoc').click(function(e) {
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
       $('.your-nip-register .wpcf7-not-valid-tip').remove();
       $('.your-nip-register').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
@@ -20,11 +20,11 @@ jQuery(document).ready(function($) {
     }).done(function(string) {
       var obj = JSON.parse(string);
       if (obj.code == 200) {
-        $('#input-nazwa-firmy').val(obj.content.name);
+        $('#input-nazwa-firmy-pomoc').val(obj.content.name);
         $('#your-name-admin').val(obj.content.firstname);
         $('#your-lastname-admin').val(obj.content.lastname);
         $('.your-nip-register .wpcf7-not-valid-tip').remove();
-        $('.input-nazwa-firmy .wpcf7-not-valid-tip').remove();
+        $('.input-nazwa-firmy-pomoc .wpcf7-not-valid-tip').remove();
         $('.your-name-admin .wpcf7-not-valid-tip').remove();
         $('.your-lastname-admin .wpcf7-not-valid-tip').remove();
       } else {

@@ -1,331 +1,69 @@
 ( function( $ ) {
+
 	'use strict';
-	if ( typeof _wpcf7 === 'undefined' || _wpcf7 === null ) {
+
+	if ( typeof wpcf7 === 'undefined' || wpcf7 === null ) {
 		return;
 	}
-	_wpcf7 = $.extend( {
+
+	wpcf7 = $.extend( {
 		cached: 0,
 		inputs: []
-	}, _wpcf7 );
-	$.fn.wpcf7InitForm = function() {
-		this.ajaxForm( {
-			beforeSubmit: function( arr, $form, options ) {
-				$form.wpcf7ClearResponseOutput();
-				$form.find( '[aria-invalid]' ).attr( 'aria-invalid', 'false' );
-				$form.find( '.ajax-loader' ).addClass( 'is-active' );
-				if(  $form.find(".container-cf7-steps").length  > 0 ) { 
-						var tab_current = parseInt( $("#wpcf7_check_tab").val() );
-                		$("#cf7-tab-"+tab_current + " .multistep-nav-right .ajax-loader").removeClass("hidden");
-				}
-                
-				return true;
-			},
-			beforeSerialize: function( $form, options ) {
-				$form.find( '[placeholder].placeheld' ).each( function( i, n ) {
-					$( n ).val( '' );
-				} );
-				return true;
-			},
-			data: { '_wpcf7_is_ajax_call': 1 },
-			dataType: 'json',
-			success: $.wpcf7AjaxSuccess,
-			error: function( xhr, status, error, $form ) {
-				var e = $( '<div class="ajax-error"></div>' ).text( error.message );
-				$form.after( e );
-			}
-		} );
-		if ( _wpcf7.cached ) {
-			this.wpcf7OnloadRefill();
-		}
-		this.wpcf7ToggleSubmit();
-		this.find( '.wpcf7-submit' ).wpcf7AjaxLoader();
-		this.find( '.wpcf7-acceptance' ).click( function() {
-			$( this ).closest( 'form' ).wpcf7ToggleSubmit();
-		} );
-		this.find( '.wpcf7-exclusive-checkbox' ).wpcf7ExclusiveCheckbox();
-		this.find( '.wpcf7-list-item.has-free-text' ).wpcf7ToggleCheckboxFreetext();
-		this.find( '[placeholder]' ).wpcf7Placeholder();
-		if ( _wpcf7.jqueryUi && ! _wpcf7.supportHtml5.date ) {
-			this.find( 'input.wpcf7-date[type="date"]' ).each( function() {
-				$( this ).datepicker( {
-					dateFormat: 'yy-mm-dd',
-					minDate: new Date( $( this ).attr( 'min' ) ),
-					maxDate: new Date( $( this ).attr( 'max' ) )
-				} );
-			} );
-		}
-		if ( _wpcf7.jqueryUi && ! _wpcf7.supportHtml5.number ) {
-			this.find( 'input.wpcf7-number[type="number"]' ).each( function() {
-				$( this ).spinner( {
-					min: $( this ).attr( 'min' ),
-					max: $( this ).attr( 'max' ),
-					step: $( this ).attr( 'step' )
-				} );
-			} );
-		}
-		this.find( '.wpcf7-character-count' ).wpcf7CharacterCount();
-		this.find( '.wpcf7-validates-as-url' ).change( function() {
-			$( this ).wpcf7NormalizeUrl();
-		} );
-		this.find( '.wpcf7-recaptcha' ).wpcf7Recaptcha();
+	}, wpcf7 );
+
+	$( function() {
+		
+
+	wpcf7.getId = function( form ) {
+		return parseInt( $( 'input[name="_wpcf7"]', form ).val(), 10 );
 	};
-	$.wpcf7AjaxSuccess = function( data, status, xhr, $form ) {
-	  // console.log(data);
-		if ( ! $.isPlainObject( data ) || $.isEmptyObject( data ) ) {
-			return;
-		}
-		_wpcf7.inputs = $form.serializeArray();
-		var $responseOutput = $form.find( 'div.wpcf7-response-output' );
-		$form.wpcf7ClearResponseOutput();
-		$form.find( '.wpcf7-form-control' ).removeClass( 'wpcf7-not-valid' );
-		$form.removeClass( 'invalid spam sent failed' );
-		if ( data.captcha ) {
-			$form.wpcf7RefillCaptcha( data.captcha );
-		}
-		if ( data.quiz ) {
-			$form.wpcf7RefillQuiz( data.quiz );
-		}
 
+	wpcf7.initForm = function( form ) {
+		var $form = $( form );
 
-		if(  $form.find(".container-cf7-steps").length  > 0 ) { 
-				$(".wpcf7-response-output").removeClass("hidden");
+		wpcf7.setStatus( $form, 'init' );
 
-        		$(".multistep-nav .ajax-loader").addClass("hidden");
-		}
-        
-		if ( data.invalids ) {
-			if(  $form.find(".container-cf7-steps").length  > 0 ) {  
-					var check_count = $form.find('.cf7-content-tab').length;
-					console.log(check_count);
-					if( check_count < 1 ) {
-							$.each( data.invalids, function( i, n ) {
-								$form.find( n.into ).wpcf7NotValidTip( n.message );
-								$form.find( n.into ).find( '.wpcf7-form-control' ).addClass( 'wpcf7-not-valid' );
-								$form.find( n.into ).find( '[aria-invalid]' ).attr( 'aria-invalid', 'true' );
-							} );
-
-							$responseOutput.addClass( 'wpcf7-validation-errors' );
-							$form.addClass( 'invalid' );
-
-							$( data.into ).wpcf7TriggerEvent( 'invalid' );
-					}else{
-					    var error_tab = false;
-			            var tab_current = parseInt( $("#wpcf7_check_tab").val() );
-						$.each( data.invalids, function( i, n ) {
-						     /*
-			                * Check tab
-			                */
-			                if( $("#cf7-tab-"+tab_current +" " +n.into  ).length > 0 ) {
-			                    error_tab = true;
-			                    $form.find( "#cf7-tab-"+tab_current +" "+ n.into ).wpcf7NotValidTip( n.message );
-							    $form.find( "#cf7-tab-"+tab_current +" "+n.into ).find( '.wpcf7-form-control' ).addClass( 'wpcf7-not-valid' );
-							    $form.find( "#cf7-tab-"+tab_current +" "+n.into ).find( '[aria-invalid]' ).attr( 'aria-invalid', 'true' );
-			                }
-						} );
-			            if( !error_tab ) {
-			                /*
-			                * Next tab
-			                */
-			                var next_tab = tab_current+1;
-			                $(".cf7-tab").addClass("hidden");
-			                $("#cf7-tab-"+next_tab).removeClass("hidden");
-			                $("#wpcf7_check_tab").val( next_tab  );
-			                $(".wpcf7-response-output").addClass("hidden");
-			                $(".cf7-display-steps-container li").removeClass("active");
-			                $(".cf7-display-steps-container .cf7-steps-"+next_tab).addClass("active");
-			                for(var i=1;i<next_tab;i++){
-			                    $(".cf7-display-steps-container li.cf7-steps-"+i).addClass("enabled");
-			                }
-			                $("#cf7-tab-"+tab_current + " .multistep-nav-right .ajax-loader").addClass("hidden");
-			                var top = $('.container-multistep-header').offset().top - 200;
-
-		       					 $('html, body').animate({scrollTop : top},800);
-			                // var tab_final = next_tab + 1;
-			                if( next_tab == $("#multistep_total").val() ){
-			                    $(".multistep-check input").val("ok");
-			                }
-			            }else{
-			                $(".wpcf7-response-output").removeClass("hidden");
-			            }
-						$responseOutput.addClass( 'wpcf7-validation-errors' );
-						$form.addClass( 'invalid' );
-						$( data.into ).wpcf7TriggerEvent( 'invalid' );
-					}
-			}else{
-					$.each( data.invalids, function( i, n ) {
-						$form.find( n.into ).wpcf7NotValidTip( n.message );
-						$form.find( n.into ).find( '.wpcf7-form-control' ).addClass( 'wpcf7-not-valid' );
-						$form.find( n.into ).find( '[aria-invalid]' ).attr( 'aria-invalid', 'true' );
-					} );
-
-					$responseOutput.addClass( 'wpcf7-validation-errors' );
-					$form.addClass( 'invalid' );
-
-					$( data.into ).wpcf7TriggerEvent( 'invalid' );
+		$form.submit( function( event ) {
+			if ( ! wpcf7.supportHtml5.placeholder ) {
+				$( '[placeholder].placeheld', $form ).each( function( i, n ) {
+					$( n ).val( '' ).removeClass( 'placeheld' );
+				} );
 			}
 
-			
-			
-		} else if ( 1 == data.spam ) {
-			$form.find( '[name="g-recaptcha-response"]' ).each( function() {
-				if ( '' == $( this ).val() ) {
-					var $recaptcha = $( this ).closest( '.wpcf7-form-control-wrap' );
-					$recaptcha.wpcf7NotValidTip( _wpcf7.recaptcha.messages.empty );
-				}
-			} );
-			$responseOutput.addClass( 'wpcf7-spam-blocked' );
-			$form.addClass( 'spam' );
-			$( data.into ).wpcf7TriggerEvent( 'spam' );
-		} else if ( 1 == data.mailSent ) {
-			if(  $form.find(".container-cf7-steps").length  > 0 ) { 
-				$responseOutput.addClass( 'wpcf7-mail-sent-ok' );
-				$form.addClass( 'sent' );
-				if ( data.onSentOk ) {
-					$.each( data.onSentOk, function( i, n ) { eval( n ) } );
-				}
-				$( data.into ).wpcf7TriggerEvent( 'mailsent' );
-				var top = $('.container-multistep-header').offset().top - 200;
-			 }else{
-			 	$responseOutput.addClass( 'wpcf7-mail-sent-ok' );
-			$form.addClass( 'sent' );
-
-			if ( data.onSentOk ) {
-				$.each( data.onSentOk, function( i, n ) { eval( n ) } );
+			if ( typeof window.FormData === 'function' ) {
+				wpcf7.submit( $form );
+				event.preventDefault();
 			}
-
-			$( data.into ).wpcf7TriggerEvent( 'mailsent' );
-			}
-			
-
-        $('html, body').animate({scrollTop : top},800);
-			if(  $form.find(".cf7-thankyou-page-success").length  > 0 ) { 
-            	var check = $form.find('.cf7-thankyou-page-success').val();
-				if( check != 0 ){
-					window.location.href = check;
-				}
-            }	
-		} else {
-			$responseOutput.addClass( 'wpcf7-mail-sent-ng' );
-			$form.addClass( 'failed' );
-			$( data.into ).wpcf7TriggerEvent( 'mailfailed' );
-			if(  $form.find(".cf7-thankyou-page-failed").length  > 0 ) { 
-            	var check = $form.find('.cf7-thankyou-page-failed').val();
-					if( check != 0 ){
-						window.location.href = check;
-					}
-            }
-		}
-		if ( data.onSubmit ) {
-			$.each( data.onSubmit, function( i, n ) { eval( n ) } );
-		}
-		$( data.into ).wpcf7TriggerEvent( 'submit' );
-		if ( 1 == data.mailSent ) {
-			if(  $form.find(".container-cf7-steps").length  > 0 ) {   
-				$form.resetForm();
-	            $(".cf7-display-steps-container li").removeClass("enabled").removeClass("active");
-	            $(".cf7-steps-1").addClass("active");
-	            $(".cf7-tab").addClass("hidden");
-	            $("#cf7-tab-1").removeClass("hidden");
-	            $("#wpcf7_check_tab").val(1);
-			}else{
-				$form.resetForm();
-			}
-			
-		}
-		$form.find( '[placeholder].placeheld' ).each( function( i, n ) {
-			$( n ).val( $( n ).attr( 'placeholder' ) );
 		} );
-		$responseOutput.append( data.message ).slideDown( 'fast' );
-		$responseOutput.attr( 'role', 'alert' );
-		$.wpcf7UpdateScreenReaderResponse( $form, data );
-	};
-	$.fn.wpcf7TriggerEvent = function( name ) {
-		return this.each( function() {
-			var elmId = this.id;
-			var inputs = _wpcf7.inputs;
-			/* DOM event */
-			var event = new CustomEvent( 'wpcf7' + name, {
-				bubbles: true,
-				detail: {
-					id: elmId,
-					inputs: inputs
-				}
-			} );
-			this.dispatchEvent( event );
-			/* jQuery event */
-			$( this ).trigger( 'wpcf7:' + name );
-			$( this ).trigger( name + '.wpcf7' ); // deprecated
+
+		$( '.wpcf7-submit', $form ).after( '<span class="ajax-loader"></span>' );
+
+		wpcf7.toggleSubmit( $form );
+
+		$form.on( 'click', '.wpcf7-acceptance', function() {
+			wpcf7.toggleSubmit( $form );
 		} );
-	};
-	$.fn.wpcf7ExclusiveCheckbox = function() {
-		return this.find( 'input:checkbox' ).click( function() {
+
+		// Exclusive Checkbox
+		$( '.wpcf7-exclusive-checkbox', $form ).on( 'click', 'input:checkbox', function() {
 			var name = $( this ).attr( 'name' );
-			$( this ).closest( 'form' ).find( 'input:checkbox[name="' + name + '"]' ).not( this ).prop( 'checked', false );
+			$form.find( 'input:checkbox[name="' + name + '"]' ).not( this ).prop( 'checked', false );
 		} );
-	};
-	$.fn.wpcf7Placeholder = function() {
-		if ( _wpcf7.supportHtml5.placeholder ) {
-			return this;
-		}
-		return this.each( function() {
-			$( this ).val( $( this ).attr( 'placeholder' ) );
-			$( this ).addClass( 'placeheld' );
-			$( this ).focus( function() {
-				if ( $( this ).hasClass( 'placeheld' ) ) {
-					$( this ).val( '' ).removeClass( 'placeheld' );
-				}
-			} );
-			$( this ).blur( function() {
-				if ( '' === $( this ).val() ) {
-					$( this ).val( $( this ).attr( 'placeholder' ) );
-					$( this ).addClass( 'placeheld' );
-				}
-			} );
-		} );
-	};
-	$.fn.wpcf7AjaxLoader = function() {
-		return this.each( function() {
-			$( this ).after( '<span class="ajax-loader"></span>' );
-		} );
-	};
-	$.fn.wpcf7ToggleSubmit = function() {
-		return this.each( function() {
-			var form = $( this );
-			if ( this.tagName.toLowerCase() != 'form' ) {
-				form = $( this ).find( 'form' ).first();
-			}
-			if ( form.hasClass( 'wpcf7-acceptance-as-validation' ) ) {
-				return;
-			}
-			var submit = form.find( 'input:submit' );
-			if ( ! submit.length ) {
-				return;
-			}
-			var acceptances = form.find( 'input:checkbox.wpcf7-acceptance' );
-			if ( ! acceptances.length ) {
-				return;
-			}
-			submit.removeAttr( 'disabled' );
-			acceptances.each( function( i, n ) {
-				n = $( n );
-				if ( n.hasClass( 'wpcf7-invert' ) && n.is( ':checked' )
-						|| ! n.hasClass( 'wpcf7-invert' ) && ! n.is( ':checked' ) ) {
-					submit.attr( 'disabled', 'disabled' );
-				}
-			} );
-		} );
-	};
-	$.fn.wpcf7ToggleCheckboxFreetext = function() {
-		return this.each( function() {
+
+		// Free Text Option for Checkboxes and Radio Buttons
+		$( '.wpcf7-list-item.has-free-text', $form ).each( function() {
+			var $freetext = $( ':input.wpcf7-free-text', this );
 			var $wrap = $( this ).closest( '.wpcf7-form-control' );
-			if ( $( this ).find( ':checkbox, :radio' ).is( ':checked' ) ) {
-				$( this ).find( ':input.wpcf7-free-text' ).prop( 'disabled', false );
+
+			if ( $( ':checkbox, :radio', this ).is( ':checked' ) ) {
+				$freetext.prop( 'disabled', false );
 			} else {
-				$( this ).find( ':input.wpcf7-free-text' ).prop( 'disabled', true );
+				$freetext.prop( 'disabled', true );
 			}
-			$wrap.find( ':checkbox, :radio' ).change( function() {
+
+			$wrap.on( 'change', ':checkbox, :radio', function() {
 				var $cb = $( '.has-free-text', $wrap ).find( ':checkbox, :radio' );
-				var $freetext = $( ':input.wpcf7-free-text', $wrap );
+
 				if ( $cb.is( ':checked' ) ) {
 					$freetext.prop( 'disabled', false ).focus();
 				} else {
@@ -333,177 +71,454 @@
 				}
 			} );
 		} );
+
+		// Placeholder Fallback
+		if ( ! wpcf7.supportHtml5.placeholder ) {
+			$( '[placeholder]', $form ).each( function() {
+				$( this ).val( $( this ).attr( 'placeholder' ) );
+				$( this ).addClass( 'placeheld' );
+
+				$( this ).focus( function() {
+					if ( $( this ).hasClass( 'placeheld' ) ) {
+						$( this ).val( '' ).removeClass( 'placeheld' );
+					}
+				} );
+
+				$( this ).blur( function() {
+					if ( '' === $( this ).val() ) {
+						$( this ).val( $( this ).attr( 'placeholder' ) );
+						$( this ).addClass( 'placeheld' );
+					}
+				} );
+			} );
+		}
+
+		if ( wpcf7.jqueryUi && ! wpcf7.supportHtml5.date ) {
+			$form.find( 'input.wpcf7-date[type="date"]' ).each( function() {
+				$( this ).datepicker( {
+					dateFormat: 'yy-mm-dd',
+					minDate: new Date( $( this ).attr( 'min' ) ),
+					maxDate: new Date( $( this ).attr( 'max' ) )
+				} );
+			} );
+		}
+
+		if ( wpcf7.jqueryUi && ! wpcf7.supportHtml5.number ) {
+			$form.find( 'input.wpcf7-number[type="number"]' ).each( function() {
+				$( this ).spinner( {
+					min: $( this ).attr( 'min' ),
+					max: $( this ).attr( 'max' ),
+					step: $( this ).attr( 'step' )
+				} );
+			} );
+		}
+
+		// Character Count
+		wpcf7.resetCounter( $form );
+
+		// URL Input Correction
+		$form.on( 'change', '.wpcf7-validates-as-url', function() {
+			var val = $.trim( $( this ).val() );
+
+			if ( val
+			&& ! val.match( /^[a-z][a-z0-9.+-]*:/i )
+			&& -1 !== val.indexOf( '.' ) ) {
+				val = val.replace( /^\/+/, '' );
+				val = 'http://' + val;
+			}
+
+			$( this ).val( val );
+		} );
 	};
-	$.fn.wpcf7CharacterCount = function() {
-		return this.each( function() {
+
+	wpcf7.submit = function( form ) {
+		if ( typeof window.FormData !== 'function' ) {
+			return;
+		}
+
+		var $form = $( form );
+
+		$( '.ajax-loader', $form ).addClass( 'is-active' );
+		wpcf7.clearResponse( $form );
+
+		var formData = new FormData( $form.get( 0 ) );
+
+		var detail = {
+			id: $form.closest( 'div.wpcf7' ).attr( 'id' ),
+			status: 'init',
+			inputs: [],
+			formData: formData
+		};
+
+		$.each( $form.serializeArray(), function( i, field ) {
+			if ( '_wpcf7' == field.name ) {
+				detail.contactFormId = field.value;
+			} else if ( '_wpcf7_version' == field.name ) {
+				detail.pluginVersion = field.value;
+			} else if ( '_wpcf7_locale' == field.name ) {
+				detail.contactFormLocale = field.value;
+			} else if ( '_wpcf7_unit_tag' == field.name ) {
+				detail.unitTag = field.value;
+			} else if ( '_wpcf7_container_post' == field.name ) {
+				detail.containerPostId = field.value;
+			} else if ( field.name.match( /^_/ ) ) {
+				// do nothing
+			} else {
+				detail.inputs.push( field );
+			}
+		} );
+
+		wpcf7.triggerEvent( $form.closest( 'div.wpcf7' ), 'beforesubmit', detail );
+
+		var ajaxSuccess = function( data, status, xhr, $form ) {
+			detail.id = $( data.into ).attr( 'id' );
+			detail.status = data.status;
+			detail.apiResponse = data;
+
+			switch ( data.status ) {
+				case 'init':
+					wpcf7.setStatus( $form, 'init' );
+					break;
+				case 'validation_failed':
+					$.each( data.invalid_fields, function( i, n ) {
+						$( n.into, $form ).each( function() {
+							wpcf7.notValidTip( this, n.message );
+							$( '.wpcf7-form-control', this ).addClass( 'wpcf7-not-valid' );
+							$( '.wpcf7-form-control', this ).attr(
+								'aria-describedby',
+								n.error_id
+							);
+							$( '[aria-invalid]', this ).attr( 'aria-invalid', 'true' );
+						} );
+					} );
+
+					wpcf7.setStatus( $form, 'invalid' );
+					wpcf7.triggerEvent( data.into, 'invalid', detail );
+					break;
+				case 'acceptance_missing':
+					wpcf7.setStatus( $form, 'unaccepted' );
+					wpcf7.triggerEvent( data.into, 'unaccepted', detail );
+					break;
+				case 'spam':
+					wpcf7.setStatus( $form, 'spam' );
+					wpcf7.triggerEvent( data.into, 'spam', detail );
+					break;
+				case 'aborted':
+					wpcf7.setStatus( $form, 'aborted' );
+					wpcf7.triggerEvent( data.into, 'aborted', detail );
+					break;
+				case 'mail_sent':
+					wpcf7.setStatus( $form, 'sent' );
+					wpcf7.triggerEvent( data.into, 'mailsent', detail );
+					break;
+				case 'mail_failed':
+					wpcf7.setStatus( $form, 'failed' );
+					wpcf7.triggerEvent( data.into, 'mailfailed', detail );
+					break;
+				default:
+					wpcf7.setStatus( $form,
+						'custom-' + data.status.replace( /[^0-9a-z]+/i, '-' )
+					);
+			}
+
+			wpcf7.refill( $form, data );
+
+			wpcf7.triggerEvent( data.into, 'submit', detail );
+
+			if ( 'mail_sent' == data.status ) {
+				$form.each( function() {
+					this.reset();
+				} );
+
+				wpcf7.toggleSubmit( $form );
+				wpcf7.resetCounter( $form );
+			}
+
+			if ( ! wpcf7.supportHtml5.placeholder ) {
+				$form.find( '[placeholder].placeheld' ).each( function( i, n ) {
+					$( n ).val( $( n ).attr( 'placeholder' ) );
+				} );
+			}
+
+			$( '.wpcf7-response-output', $form )
+				.html( '' ).append( data.message ).slideDown( 'fast' );
+
+			$( '.screen-reader-response', $form.closest( '.wpcf7' ) ).each( function() {
+				var $response = $( this );
+				$( '[role="status"]', $response ).html( data.message );
+
+				if ( data.invalid_fields ) {
+					$.each( data.invalid_fields, function( i, n ) {
+						if ( n.idref ) {
+							var $li = $( '<li></li>' ).append( $( '<a></a>' ).attr( 'href', '#' + n.idref ).append( n.message ) );
+						} else {
+							var $li = $( '<li></li>' ).append( n.message );
+						}
+
+						$li.attr( 'id', n.error_id );
+
+						$( 'ul', $response ).append( $li );
+					} );
+				}
+			} );
+
+			if ( data.posted_data_hash ) {
+				$form.find( 'input[name="_wpcf7_posted_data_hash"]' ).first()
+					.val( data.posted_data_hash );
+			}
+		};
+
+		$.ajax( {
+			type: 'POST',
+			url: wpcf7.apiSettings.getRoute(
+				'/contact-forms/' + wpcf7.getId( $form ) + '/feedback' ),
+			data: formData,
+			dataType: 'json',
+			processData: false,
+			contentType: false
+		} ).done( function( data, status, xhr ) {
+			ajaxSuccess( data, status, xhr, $form );
+			$( '.ajax-loader', $form ).removeClass( 'is-active' );
+		} ).fail( function( xhr, status, error ) {
+			var $e = $( '<div class="ajax-error"></div>' ).text( error.message );
+			$form.after( $e );
+		} );
+	};
+
+	wpcf7.triggerEvent = function( target, name, detail ) {
+		var event = new CustomEvent( 'wpcf7' + name, {
+			bubbles: true,
+			detail: detail
+		} );
+
+		$( target ).get( 0 ).dispatchEvent( event );
+	};
+
+	wpcf7.setStatus = function( form, status ) {
+		var $form = $( form );
+		var prevStatus = $form.attr( 'data-status' );
+
+		$form.data( 'status', status );
+		$form.addClass( status );
+		$form.attr( 'data-status', status );
+
+		if ( prevStatus && prevStatus !== status ) {
+			$form.removeClass( prevStatus );
+		}
+	}
+
+	wpcf7.toggleSubmit = function( form, state ) {
+		var $form = $( form );
+		var $submit = $( 'input:submit', $form );
+
+		if ( typeof state !== 'undefined' ) {
+			$submit.prop( 'disabled', ! state );
+			return;
+		}
+
+		if ( $form.hasClass( 'wpcf7-acceptance-as-validation' ) ) {
+			return;
+		}
+
+		$submit.prop( 'disabled', false );
+
+		$( '.wpcf7-acceptance', $form ).each( function() {
+			var $span = $( this );
+			var $input = $( 'input:checkbox', $span );
+
+			if ( ! $span.hasClass( 'optional' ) ) {
+				if ( $span.hasClass( 'invert' ) && $input.is( ':checked' )
+				|| ! $span.hasClass( 'invert' ) && ! $input.is( ':checked' ) ) {
+					$submit.prop( 'disabled', true );
+					return false;
+				}
+			}
+		} );
+	};
+
+	wpcf7.resetCounter = function( form ) {
+		var $form = $( form );
+
+		$( '.wpcf7-character-count', $form ).each( function() {
 			var $count = $( this );
 			var name = $count.attr( 'data-target-name' );
 			var down = $count.hasClass( 'down' );
 			var starting = parseInt( $count.attr( 'data-starting-value' ), 10 );
 			var maximum = parseInt( $count.attr( 'data-maximum-value' ), 10 );
 			var minimum = parseInt( $count.attr( 'data-minimum-value' ), 10 );
-			var updateCount = function( $target ) {
+
+			var updateCount = function( target ) {
+				var $target = $( target );
 				var length = $target.val().length;
 				var count = down ? starting - length : length;
 				$count.attr( 'data-current-value', count );
 				$count.text( count );
+
 				if ( maximum && maximum < length ) {
 					$count.addClass( 'too-long' );
 				} else {
 					$count.removeClass( 'too-long' );
 				}
+
 				if ( minimum && length < minimum ) {
 					$count.addClass( 'too-short' );
 				} else {
 					$count.removeClass( 'too-short' );
 				}
 			};
-			$count.closest( 'form' ).find( ':input[name="' + name + '"]' ).each( function() {
-				updateCount( $( this ) );
+
+			$( ':input[name="' + name + '"]', $form ).each( function() {
+				updateCount( this );
+
 				$( this ).keyup( function() {
-					updateCount( $( this ) );
+					updateCount( this );
 				} );
 			} );
 		} );
 	};
-	$.fn.wpcf7NormalizeUrl = function() {
-		return this.each( function() {
-			var val = $.trim( $( this ).val() );
-			// check the scheme part
-			if ( val && ! val.match( /^[a-z][a-z0-9.+-]*:/i ) ) {
-				val = val.replace( /^\/+/, '' );
-				val = 'http://' + val;
-			}
-			$( this ).val( val );
-		} );
-	};
-	$.fn.wpcf7NotValidTip = function( message ) {
-		return this.each( function() {
-			var $into = $( this );
-			$into.find( 'span.wpcf7-not-valid-tip' ).remove();
-			$into.append( '<span role="alert" class="wpcf7-not-valid-tip">' + message + '</span>' );
-			if ( $into.is( '.use-floating-validation-tip *' ) ) {
-				$( '.wpcf7-not-valid-tip', $into ).mouseover( function() {
-					$( this ).wpcf7FadeOut();
+
+	wpcf7.notValidTip = function( target, message ) {
+		var $target = $( target );
+		$( '.wpcf7-not-valid-tip', $target ).remove();
+
+		$( '<span></span>' ).attr( {
+			'class': 'wpcf7-not-valid-tip',
+			'aria-hidden': 'true',
+		} ).text( message ).appendTo( $target );
+
+		if ( $target.is( '.use-floating-validation-tip *' ) ) {
+			var fadeOut = function( target ) {
+				$( target ).not( ':hidden' ).animate( {
+					opacity: 0
+				}, 'fast', function() {
+					$( this ).css( { 'z-index': -100 } );
 				} );
-				$( ':input', $into ).focus( function() {
-					$( '.wpcf7-not-valid-tip', $into ).not( ':hidden' ).wpcf7FadeOut();
-				} );
-			}
-		} );
-	};
-	$.fn.wpcf7FadeOut = function() {
-		return this.each( function() {
-			$( this ).animate( {
-				opacity: 0
-			}, 'fast', function() {
-				$( this ).css( { 'z-index': -100 } );
+			};
+
+			$target.on( 'mouseover', '.wpcf7-not-valid-tip', function() {
+				fadeOut( this );
 			} );
-		} );
-	};
-	$.fn.wpcf7OnloadRefill = function() {
-		return this.each( function() {
-			var url = $( this ).attr( 'action' );
-			if ( 0 < url.indexOf( '#' ) ) {
-				url = url.substr( 0, url.indexOf( '#' ) );
-			}
-			var id = $( this ).find( 'input[name="_wpcf7"]' ).val();
-			var unitTag = $( this ).find( 'input[name="_wpcf7_unit_tag"]' ).val();
-			$.getJSON( url,
-				{ _wpcf7_is_ajax_call: 1, _wpcf7: id, _wpcf7_request_ver: $.now() },
-				function( data ) {
-					if ( data && data.captcha ) {
-						$( '#' + unitTag ).wpcf7RefillCaptcha( data.captcha );
-					}
-					if ( data && data.quiz ) {
-						$( '#' + unitTag ).wpcf7RefillQuiz( data.quiz );
-					}
-				}
-			);
-		} );
-	};
-	$.fn.wpcf7RefillCaptcha = function( captcha ) {
-		return this.each( function() {
-			var form = $( this );
-			$.each( captcha, function( i, n ) {
-				form.find( ':input[name="' + i + '"]' ).clearFields();
-				form.find( 'img.wpcf7-captcha-' + i ).attr( 'src', n );
-				var match = /([0-9]+)\.(png|gif|jpeg)$/.exec( n );
-				form.find( 'input:hidden[name="_wpcf7_captcha_challenge_' + i + '"]' ).attr( 'value', match[ 1 ] );
+
+			$target.on( 'focus', ':input', function() {
+				fadeOut( $( '.wpcf7-not-valid-tip', $target ) );
 			} );
-		} );
-	};
-	$.fn.wpcf7RefillQuiz = function( quiz ) {
-		return this.each( function() {
-			var form = $( this );
-			$.each( quiz, function( i, n ) {
-				form.find( ':input[name="' + i + '"]' ).clearFields();
-				form.find( ':input[name="' + i + '"]' ).siblings( 'span.wpcf7-quiz-label' ).text( n[ 0 ] );
-				form.find( 'input:hidden[name="_wpcf7_quiz_answer_' + i + '"]' ).attr( 'value', n[ 1 ] );
-			} );
-		} );
-	};
-	$.fn.wpcf7ClearResponseOutput = function() {
-		return this.each( function() {
-			$( this ).find( 'div.wpcf7-response-output' ).hide().empty().removeClass( 'wpcf7-mail-sent-ok wpcf7-mail-sent-ng wpcf7-validation-errors wpcf7-spam-blocked' ).removeAttr( 'role' );
-			$( this ).find( 'span.wpcf7-not-valid-tip' ).remove();
-			$( this ).find( '.ajax-loader' ).removeClass( 'is-active' );
-		} );
-	};
-	$.fn.wpcf7Recaptcha = function() {
-		return this.each( function() {
-			var events = 'wpcf7:spam wpcf7:mailsent wpcf7:mailfailed';
-			$( this ).closest( 'div.wpcf7' ).on( events, function( e ) {
-				if ( recaptchaWidgets && grecaptcha ) {
-					$.each( recaptchaWidgets, function( index, value ) {
-						grecaptcha.reset( value );
-					} );
-				}
-			} );
-		} );
-	};
-	$.wpcf7UpdateScreenReaderResponse = function( $form, data ) {
-		$( '.wpcf7 .screen-reader-response' ).html( '' ).attr( 'role', '' );
-		if ( data.message ) {
-			var $response = $form.siblings( '.screen-reader-response' ).first();
-			$response.append( data.message );
-			if ( data.invalids ) {
-				var $invalids = $( '<ul></ul>' );
-				$.each( data.invalids, function( i, n ) {
-					if ( n.idref ) {
-						var $li = $( '<li></li>' ).append( $( '<a></a>' ).attr( 'href', '#' + n.idref ).append( n.message ) );
-					} else {
-						var $li = $( '<li></li>' ).append( n.message );
-					}
-					$invalids.append( $li );
-				} );
-				$response.append( $invalids );
-			}
-			$response.attr( 'role', 'alert' ).focus();
 		}
 	};
-	$.wpcf7SupportHtml5 = function() {
-		var features = {};
-		var input = document.createElement( 'input' );
-		features.placeholder = 'placeholder' in input;
-		var inputTypes = [ 'email', 'url', 'tel', 'number', 'range', 'date' ];
-		$.each( inputTypes, function( index, value ) {
-			input.setAttribute( 'type', value );
-			features[ value ] = input.type !== 'text';
-		} );
-		return features;
+
+	wpcf7.refill = function( form, data ) {
+		var $form = $( form );
+
+		var refillCaptcha = function( $form, items ) {
+			$.each( items, function( i, n ) {
+				$form.find( ':input[name="' + i + '"]' ).val( '' );
+				$form.find( 'img.wpcf7-captcha-' + i ).attr( 'src', n );
+				var match = /([0-9]+)\.(png|gif|jpeg)$/.exec( n );
+				$form.find( 'input:hidden[name="_wpcf7_captcha_challenge_' + i + '"]' ).attr( 'value', match[ 1 ] );
+			} );
+		};
+
+		var refillQuiz = function( $form, items ) {
+			$.each( items, function( i, n ) {
+				$form.find( ':input[name="' + i + '"]' ).val( '' );
+				$form.find( ':input[name="' + i + '"]' ).siblings( 'span.wpcf7-quiz-label' ).text( n[ 0 ] );
+				$form.find( 'input:hidden[name="_wpcf7_quiz_answer_' + i + '"]' ).attr( 'value', n[ 1 ] );
+			} );
+		};
+
+		if ( typeof data === 'undefined' ) {
+			$.ajax( {
+				type: 'GET',
+				url: wpcf7.apiSettings.getRoute(
+					'/contact-forms/' + wpcf7.getId( $form ) + '/refill' ),
+				beforeSend: function( xhr ) {
+					var nonce = $form.find( ':input[name="_wpnonce"]' ).val();
+
+					if ( nonce ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', nonce );
+					}
+				},
+				dataType: 'json'
+			} ).done( function( data, status, xhr ) {
+				if ( data.captcha ) {
+					refillCaptcha( $form, data.captcha );
+				}
+
+				if ( data.quiz ) {
+					refillQuiz( $form, data.quiz );
+				}
+			} );
+
+		} else {
+			if ( data.captcha ) {
+				refillCaptcha( $form, data.captcha );
+			}
+
+			if ( data.quiz ) {
+				refillQuiz( $form, data.quiz );
+			}
+		}
 	};
-	$( function() {
-		_wpcf7.supportHtml5 = $.wpcf7SupportHtml5();
-		$( 'div.wpcf7 > form' ).wpcf7InitForm();
-	} );
+
+	wpcf7.clearResponse = function( form ) {
+		var $form = $( form );
+
+		$form.siblings( '.screen-reader-response' ).each( function() {
+			$( '[role="status"]', this ).html( '' );
+			$( 'ul', this ).html( '' );
+		} );
+
+		$( '.wpcf7-not-valid-tip', $form ).remove();
+		$( '[aria-invalid]', $form ).attr( 'aria-invalid', 'false' );
+		$( '.wpcf7-form-control', $form ).removeClass( 'wpcf7-not-valid' );
+
+		$( '.wpcf7-response-output', $form ).hide().empty();
+	};
+
+	wpcf7.apiSettings.getRoute = function( path ) {
+		var url = wpcf7.apiSettings.root;
+
+		url = url.replace(
+			wpcf7.apiSettings.namespace,
+			wpcf7.apiSettings.namespace + path );
+
+		return url;
+  };
+  
+  wpcf7.supportHtml5 = ( function() {
+    var features = {};
+    var input = document.createElement( 'input' );
+
+    features.placeholder = 'placeholder' in input;
+
+    var inputTypes = [ 'email', 'url', 'tel', 'number', 'range', 'date' ];
+
+    $.each( inputTypes, function( index, value ) {
+      input.setAttribute( 'type', value );
+      features[ value ] = input.type !== 'text';
+    } );
+
+    return features;
+  } )();
+
+  $( 'div.wpcf7 > form' ).each( function() {
+    var $form = $( this );
+    wpcf7.initForm( $form );
+
+    if ( wpcf7.cached ) {
+      wpcf7.refill( $form );
+    }
+  } );
+} );
+
 } )( jQuery );
+
 /*
  * Polyfill for Internet Explorer
  * See https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
  */
 ( function () {
 	if ( typeof window.CustomEvent === "function" ) return false;
+
 	function CustomEvent ( event, params ) {
 		params = params || { bubbles: false, cancelable: false, detail: undefined };
 		var evt = document.createEvent( 'CustomEvent' );
@@ -511,6 +526,8 @@
 			params.bubbles, params.cancelable, params.detail );
 		return evt;
 	}
+
 	CustomEvent.prototype = window.Event.prototype;
+
 	window.CustomEvent = CustomEvent;
 } )();
