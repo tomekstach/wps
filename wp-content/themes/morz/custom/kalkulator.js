@@ -263,7 +263,12 @@ jQuery(document).ready(function($) {
 
       if (zysk > 0) {
         html += '<div id="podsuma-zysk"><h4>Na abonamencie oszczędzasz</h4><p>';
-        html += '<span>' + ((zysk * 100) / suma_standard).toFixed(0).toString().replace(".", ",") + '</span> % czyli <span>' + zysk.toFixed(2).toString().replace(".", ",") + '</span> PLN</p></div>';
+        html += '<span>' + ((zysk * 100) / suma_standard).toFixed(0).toString().replace(".", ",") + '</span> % czyli <span>' + zysk.toFixed(2).toString().replace(".", ",") + '</span> PLN</p>';
+        if (!specjalna) {
+          html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
+        } else {
+          html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
+        }
       }
     } else {
       //console.log('Zysk: ' + suma_standard + ' - ' + suma);
