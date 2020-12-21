@@ -126,6 +126,7 @@
   text-align: center;
   box-shadow: 0 0 15px #ddd;
   position: relative;
+  min-width: 290px;
 }
 
 #podsuma-zysk h4 {
@@ -152,4 +153,6 @@
   width: 100%;
   bottom: 3px;
   left: 0;
+  font-size: 16px;
+  font-weight: bold;
 }

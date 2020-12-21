@@ -111,6 +111,7 @@ jQuery(document).ready(function($) {
     var html = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota</th></tr></thead><tbody>'
     var htmlStandard = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota</th></tr></thead><tbody>'
     var specjalna = false;
+    var demo = true;
     var iloscProduktow = 0;
     var suma = 0
     var suma_standard = 0;
@@ -205,6 +206,10 @@ jQuery(document).ready(function($) {
           var cenaRodzaj = 'cena podstawowa';
         }
 
+        if ($(produkt).find('.kalk_ps option:selected').text() == '8.5x.x -' || $(produkt).find('.kalk_ps option:selected').text() == '8.4x.x' || $(produkt).find('.kalk_ps option:selected').text() == '8.3x.x lub starszą') {
+          demo = false;
+        }
+
         if ($(produkt).find('.kalk_number').val()) {
           ilosc = parseInt($(produkt).find('.kalk_number').val());
           iloscProduktow += ilosc;
@@ -261,17 +266,28 @@ jQuery(document).ready(function($) {
         $('#kalk-podsuma-standard').html('');
       }
 
+      html += '<div id="podsuma-zysk">';
+
       if (zysk > 0) {
-        html += '<div id="podsuma-zysk"><h4>Na abonamencie oszczędzasz</h4><p>';
+        html += '<h4>Na abonamencie oszczędzasz</h4><p>';
         html += '<span>' + ((zysk * 100) / suma_standard).toFixed(0).toString().replace(".", ",") + '</span> % czyli <span>' + zysk.toFixed(2).toString().replace(".", ",") + '</span> PLN</p>';
-        if (!specjalna) {
-          html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
-        } else {
-          html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
-        }
+      }
+
+      if (demo) {
+        html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
+      } else {
+        html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
       }
     } else {
       //console.log('Zysk: ' + suma_standard + ' - ' + suma);
+      html += '<div id="podsuma-zysk">';
+
+      if (demo) {
+        html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
+      } else {
+        html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
+      }
+
       $('#kalk-podsuma-standard').html('');
       $('#calculated-standard').val('0,00 PLN');
     }
