@@ -2799,7 +2799,7 @@ function custom_login()
       exit;
     } else {
       if (array_key_exists('redirect_to', $_POST)) {
-        if (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles)) {
+        if (in_array('registered', $user->roles) || in_array('registeredbiuro', $user->roles) && (get_site_url() == 'https://biura.wapro.pl' || get_site_url() == 'https://partnerzy.wapro.pl')) {
           wp_redirect(get_site_url() . '/dziekujemy-za-rejestracje/');
         } elseif (in_array('subscriber', $user->roles) && get_site_url() == 'https://biura.wapro.pl') {
           wp_redirect(get_site_url() . '/dla-biur/');
