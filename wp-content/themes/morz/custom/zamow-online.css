@@ -347,36 +347,30 @@ p.pp-cf7-form-description {
 div.wpcf7 .cf7-submit-button .ajax-loader {
   position: absolute;
   top: 15px;
-  left: 120px;
+  left: 10px;
 }
 
 @media (max-width: 992px) {
   #main aside.right.vamtam-body-sidebar {
     display: none;
   }
-
   #main .container-multistep-header ul li {
     height: 50px;
   }
- 
   #formularz {
     background: linear-gradient(180deg, #EDEFF0 50px, #FFF 100px);
   }
-
   #main .umowa-serwisowa-heading .number {
     font-size: 70px;
     line-height: 70px;
   }
-
   #main .umowa-serwisowa-heading h2 {
     font-size: 20px;
     line-height: 20px;
   }
-
   #main .umowa-serwisowa-underline {
     margin-top: 15px;
   }
-
   .wpcf7-form h3 {
     font-size: 20px;
     line-height: 20px;
