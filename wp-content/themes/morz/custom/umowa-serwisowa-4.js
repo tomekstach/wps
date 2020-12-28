@@ -16,12 +16,12 @@ jQuery(document).ready(function($) {
       $('#emailzleceniodawcy').prop('readonly', true);
     }
 
-    $('.cf7-tab.cf7-tab-4 .multistep-nav-right').html('<p><a class="multistep-cf7-wyslij">Wyślij</a><span class="ajax-loader"></span></p>');
+    /*$('.cf7-tab.cf7-tab-4 .multistep-nav-right').html('<p><a class="multistep-cf7-wyslij">Wyślij</a><span class="ajax-loader"></span></p>');
 
     $('.cf7-tab.cf7-tab-4 .multistep-cf7-wyslij').click(function(e) {
       var result = $(this).closest('form').submit();
       return false;
-    });
+    });*/
   });
 
   document.addEventListener('wpcf7mailsent', function(event) {

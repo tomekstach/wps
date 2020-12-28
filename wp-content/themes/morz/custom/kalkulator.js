@@ -218,11 +218,11 @@ jQuery(document).ready(function($) {
         if (ilosc > 0 && cena > 0) {
           html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena + ' PLN</td><td class="kwota"><span>' + (cena * ilosc) + '</span> PLN</td></tr>';
           if (wersja != 'Start' && wersja != 'START') {
-            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS 1 stanowisko ' + produktNazwa + ' 365 ' + wersja + ' na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS 1 stanowisko ' + produktNazwa + ' 365 ' + wersja + ' na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
 
           if (produktNazwa == 'WAPRO Mag' && (wersja == 'Prestiż' || wersja == 'Prestiż PLUS')) {
-            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
           suma += cena * ilosc;
           if (wersja != 'Start' && produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best') {
@@ -244,7 +244,7 @@ jQuery(document).ready(function($) {
     });
 
     if (iloscProduktow > 0) {
-      html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO Analizy 365 na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+      html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO Analizy 365 na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
     }
 
     html += '</tbody></table>';

@@ -4,7 +4,9 @@
 
 	if ( typeof wpcf7 === 'undefined' || wpcf7 === null ) {
 		return;
-	}
+  }
+  
+  console.log('test2');
 
 	wpcf7 = $.extend( {
 		cached: 0,
@@ -13,6 +15,7 @@
 
 	$( function() {
 		wpcf7.supportHtml5 = ( function() {
+      console.log('test3');
 			var features = {};
 			var input = document.createElement( 'input' );
 
@@ -29,13 +32,16 @@
 		} )();
 
 		$( 'div.wpcf7 > form' ).each( function() {
-			var $form = $( this );
+      var $form = $( this );
+      console.log('form!!!');
 			console.log($form);
 			$form.submit( function( event ) {
+        console.log('$form.submit');
 				if ( typeof window.FormData !== 'function' ) {
+          console.log('FormData');
 					return;
 				}
-
+        console.log('correct submit');
 				wpcf7.submit( $form );
 				event.preventDefault();
 			} );
@@ -178,9 +184,12 @@
 	};
 
 	wpcf7.submit = function( form ) {
+    console.log('test - submit');
 		var $form = $( form );
 //-----------------------------------------------------------------------Custom----------------------------------------------------------
 if(  $form.find(".container-cf7-steps").length  > 0 ) {
+
+  console.log('test');
 
 		var step_comfirm_html = '<div class="cf7-container-step-confirm">';
 		var cout_tab = $(".cf7-display-steps-container li", $form).length - 2;
