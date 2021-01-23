@@ -1,13 +1,13 @@
 jQuery(document).ready(function($){
     $(".wpcf7").on('click','.wpcf7-submit',function(e){
         
-        var check_class = $(this).closest('.wpcf7').find('.wpcf7-acceptance').length;
+        /*var check_class = $(this).closest('.wpcf7').find('.wpcf7-acceptance').length;
         if( check_class >0 ){
             if( !$(this).closest('.wpcf7').find('.wpcf7-acceptance input').is(":checked") ) {
                $(this).closest('.wpcf7').find('.wpcf7-acceptance').addClass('wpcf7-not-valid1');
                e.preventDefault();
             }
-        }
+        }*/
     })
     $(".multistep-cf7-next").click(function(e){
         /*

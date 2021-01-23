@@ -1,5 +1,10 @@
 jQuery(document).ready(function($) {
 
+  $('.program select').change(function() {
+    $('#cf7-container-builder-1559219370795 select').val("wybierz numer wersji");
+    $('#cf7-container-builder-1559219370795 option').removeAttr('selected');
+  });
+
   $('.cf7-tab.cf7-tab-3 .multistep-cf7-next').click(function(e) {
 
     if ($('#input-nip').val() != '') {
@@ -24,8 +29,8 @@ jQuery(document).ready(function($) {
     });*/
   });
 
-  document.addEventListener('wpcf7mailsent', function(event) {
-    //console.log('mailsent!!!');
+  /*document.addEventListener('wpcf7mailsent', function(event) {
+    console.log('mailsent!!!');
     location.href = wpcf7_redirect_forms[47037].external_url + '?contract=' + $("#umowa_id").val() + '&new=982y547syrth94w8j0826#nowa-umowa';
-  });
+  });*/
 });

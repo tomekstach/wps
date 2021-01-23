@@ -784,8 +784,8 @@ function custom_archive_text_validation_filter($result, $tag)
           if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
             $result->invalidate($tag, $nip24->getLastError());
           } else {
-            $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-            //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+            //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+            $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
             $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -866,8 +866,8 @@ function custom_text_validation_filter($result, $tag)
             if (strpos($nip24->getLastError(), 'Dane pobrane z serwisu REGON są niekompletne') === false) {
               $result->invalidate($tag, $nip24->getLastError());
             } else {
-              $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-              //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+              //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+              $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
               $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -2315,8 +2315,8 @@ function after_sent_mail($cf7)
       $nip  = $data['yl-nip'];
 
       // SEND RODO CONTRACT TO ERP
-      $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-      //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+      //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+      $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
       $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -2487,8 +2487,8 @@ function after_sent_mail($cf7)
       $attachments = array(WP_CONTENT_DIR . '/uploads/2019/10/Umowa_powierzenia_przetwarzania_danych_osobowych.pdf');
 
       // SEND RODO CONTRACT TO ERP
-      $url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-      //$url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+      //$url = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+      $url = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
       $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
@@ -2730,6 +2730,40 @@ function after_sent_mail($cf7)
         'program_version_wf-fakir-dos' => 'WF-FaKir DOS'
       ];
 
+      if (is_array($data['sql'])) {
+        if (count($data['sql']) > 0) {
+          $sql = $data['sql'][0];
+        } else {
+          $sql = '';
+        }
+      } else {
+        $sql = $data['sql'];
+      }
+
+      if (is_array($data['program'])) {
+        if (count($data['program']) > 0) {
+          $program = $data['program'][0];
+        } else {
+          $program = '';
+        }
+      } else {
+        $program = $data['program'];
+      }
+
+      if ($program != '') {
+        if (array_search($program, $programy)) {
+          $wersja = $data[array_search($program, $programy)];
+
+          if (is_array($wersja)) {
+            $wersja = $wersja[0];
+          }
+        } else {
+          $wersja = '';
+        }
+      } else {
+        $wersja = '';
+      }
+
       // Create new post
       $new_post_id = wp_insert_post($args);
       //program_version_analizy
@@ -2740,11 +2774,11 @@ function after_sent_mail($cf7)
       // Add password to the file
       update_field('field_5de2cf948e447',  $data['haslo'], 'post_' . $new_post_id);
       // Add program to the file data
-      update_field('field_5de2cfad8e448',  $data['program'], 'post_' . $new_post_id);
+      update_field('field_5de2cfad8e448',  $program, 'post_' . $new_post_id);
       // Add program version to the file data
-      update_field('field_5de2cfbe8e449',  $data[array_search($data['program'], $programy)], 'post_' . $new_post_id);
+      update_field('field_5de2cfbe8e449',  $wersja, 'post_' . $new_post_id);
       // Add SQL version to the file data
-      update_field('field_5de2cfc58e44a',  $data['sql'], 'post_' . $new_post_id);
+      update_field('field_5de2cfc58e44a',  $sql, 'post_' . $new_post_id);
       // Add description to the file data
       update_field('field_5de2cfd08e44b',  $data['problem'], 'post_' . $new_post_id);
       // Add attachment to the file data

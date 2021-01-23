@@ -341,7 +341,7 @@ p.pp-cf7-form-description {
 }
 
 #main .wpcf7-form .cf7-submit-button input.wpcf7-submit {
-  width: 170px;
+  width: auto;
 }
 
 div.wpcf7 .cf7-submit-button .ajax-loader {

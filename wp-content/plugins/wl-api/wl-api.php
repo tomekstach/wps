@@ -384,7 +384,7 @@ function wl_get_rodo()
         $umowa->address .= '/' . $all->houseNumber;
       }
 
-      $umowa->city       = $all->postCity;
+      $umowa->city       = $all->postCity != '' ? $all->postCity : $all->city;
       if ($all->postCode) {
         $umowa->postCode   = substr($all->postCode, 0, 2) . '-' . substr($all->postCode, -3);
       } else {

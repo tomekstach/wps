@@ -239,7 +239,7 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
 		  	
 		  	
 		});
-		//console.log(1);
+		console.log(1);
 			step_comfirm_html +="</div>";
 			$(".cf7-data-confirm",$form).html(step_comfirm_html);
 			
@@ -283,9 +283,14 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
         }
       } );
 
+      console.log(2);
+
       wpcf7.triggerEvent( $form.closest( 'div.wpcf7' ), 'beforesubmit', detail );
 
+      console.log(3);
+
 			var ajaxSuccess = function( data, status, xhr, $form ) {
+        console.log(7);
 				$(".multistep-nav .ajax-loader", $form).addClass("hidden");
 
 				detail.id = $( data.into ).attr( 'id' );
@@ -458,7 +463,9 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
 
 					$response.attr( 'role', 'alert' ).focus();
 				} );
-			};
+      };
+      
+      console.log(6);
 
 			$.ajax( {
 				type: 'POST',
@@ -469,9 +476,11 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
 				processData: false,
 				contentType: false
 			} ).done( function( data, status, xhr ) {
+        console.log(4);
 				ajaxSuccess( data, status, xhr, $form );
 				$( '.ajax-loader', $form ).removeClass( 'is-active' );
 			} ).fail( function( xhr, status, error ) {
+        console.log(error.message);
 				var $e = $( '<div class="ajax-error"></div>' ).text( error.message );
 				$form.after( $e );
 			} );
@@ -535,7 +544,9 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
 								$( '.wpcf7-form-control', this ).addClass( 'wpcf7-not-valid' );
 								$( '[aria-invalid]', this ).attr( 'aria-invalid', 'true' );
 							} );
-						} );
+            } );
+            
+            console.log('message validation_failed');
 
 						$message.addClass( 'wpcf7-validation-errors' );
 						$form.addClass( 'invalid' );
@@ -640,9 +651,11 @@ if(  $form.find(".container-cf7-steps").length  > 0 ) {
 				processData: false,
 				contentType: false
 			} ).done( function( data, status, xhr ) {
+        console.log('Ajax done!');
 				ajaxSuccess( data, status, xhr, $form );
 				$( '.ajax-loader', $form ).removeClass( 'is-active' );
 			} ).fail( function( xhr, status, error ) {
+        console.log('Ajax error!');
 				var $e = $( '<div class="ajax-error"></div>' ).text( error.message );
 				$form.after( $e );
 			} );
