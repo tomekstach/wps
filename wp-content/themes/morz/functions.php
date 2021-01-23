@@ -2636,6 +2636,8 @@ function after_sent_mail($cf7)
       wp_mail($to, $subject, $message, $headers, $attachments);
       $to = 'Agnieszka.Palyz@assecobs.pl';
       wp_mail($to, $subject, $message, $headers, $attachments);
+      $to = 'astosoft@astosoft.pl';
+      wp_mail($to, $subject, $message, $headers, $attachments);
     }
 
     // Register pomoc user form
