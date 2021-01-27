@@ -1035,7 +1035,7 @@ function custom_archive_checkbox_validation_filter($result, $tag)
     }
   }
 
-  if ($_POST['_wpcf7'] == '45319' || $_POST['_wpcf7'] == '46148' || $_POST['_wpcf7'] == '46146') {
+  if ($_POST['_wpcf7'] == '45319' || $_POST['_wpcf7'] == '46148' || $_POST['_wpcf7'] == '46146' || $_POST['_wpcf7'] == '49603') {
     $checkboxTag    = false;
     $checkboxValue  = false;
 
@@ -2534,7 +2534,7 @@ function after_sent_mail($cf7)
       update_field('field_5e7221c1aa563', '20190624', 'post_' . $umowa_id);
 
       $params = ['ArrayAgreementCreateData' => ['AgreementCreateData' => [
-        'NrZewn' => $umowa_id,
+        'NrZewn' => $umowa_id.date('YmdHis'),
         'Zrodlo' => 'Wapro',
         'NIPSameCyfry' => $nip,
         'WersjaUmowy' => '20190624',
