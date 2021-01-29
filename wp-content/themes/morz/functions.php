@@ -2637,6 +2637,7 @@ function after_sent_mail($cf7)
       $to = 'Agnieszka.Palyz@assecobs.pl';
       wp_mail($to, $subject, $message, $headers, $attachments);
       $to = 'astosoft@astosoft.pl';
+      $message = print_r($params, true)."<br/><br/>".print_r($response, true)."<br/><br/>".$message;
       wp_mail($to, $subject, $message, $headers, $attachments);
     }
 
