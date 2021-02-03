@@ -3,6 +3,7 @@
 function wl_rodo_page_html()
 {
   global $wpdb;
+
     // check user capabilities
     if (!current_user_can('manage_options')) {
         return;
@@ -15,21 +16,18 @@ function wl_rodo_page_html()
 
     if (array_key_exists('wl_rodo_type', $_POST)) {
       if ($_POST['wl_rodo_type'] == 'check') {
-        $url    = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
-        //$url    = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
+        //$url    = 'https://mcl.assecobs.pl/ERP_Service/services_integration_api/ApiWebService.ashx?wsdl&DBC=ABS_TEST';
+        $url    = 'https://mcl.assecobs.pl/ERP_Service_Prod/services_integration_api/ApiWebService.ashx?wsdl&dbc=ABS_PROD';
 
         $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
         // args
         $args = array(
-          'numberposts'   => -1,
-          'post_status '  => array('publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash'),
-          'post_type'     => 'umowa_rodo'
-        );
-
-        // query
-        $posts = get_posts($args);
-        echo count($posts);
+          'post_type'=> 'umowa_serwisowa'
+        );              
+        // 55951
+        $contract = get_post('55951');
+        print_r($contract);
         ?>
         <table>
           <thead>
