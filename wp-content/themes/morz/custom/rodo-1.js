@@ -105,7 +105,11 @@ jQuery(document).ready(function($) {
               var DPAgreementGetResult = obj.responseAgreement.ArrayDPAgreementGetResult.DPAgreementGetResult;
             }
 
-            message += '<p>Klient ma podpisaną umowę RODO (' + DPAgreementGetResult.DataPodpisania.replace('T', ' ') + ') na:</p><ul>';
+            if (DPAgreementGetResult.DataPodpisania) {
+              message += '<p>Klient ma podpisaną umowę RODO (' + DPAgreementGetResult.DataPodpisania.replace('T', ' ') + ') na:</p><ul>';
+            } else {
+              message += '<p style="color: red;">Klient ma umowę RODO (umowa nie jest podpisana) na:</p><ul>';
+            }
             if (DPAgreementGetResult.Hosting == 1) {
               message += '<li>Hosting</li>';
             }

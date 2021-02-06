@@ -27,7 +27,7 @@ jQuery(document).ready(function($) {
       }).done(function(string) {
         var obj = JSON.parse(string);
 
-        //console.log(obj.content);
+        //console.log(obj);
 
         var c_d = new Date();
         var c_month = c_d.getMonth() + 1;
@@ -39,13 +39,15 @@ jQuery(document).ready(function($) {
         if (obj.code == 200) {
 
           if (obj.content.ArrayDPAgreementGetResult.Status == '1') {
-            console.log(obj.content.ArrayDPAgreementGetResult);
+            //console.log(obj.content.ArrayDPAgreementGetResult);
 
             if (Array.isArray(obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult)) {
               var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult[obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult.length - 1]
             } else {
               var DPAgreementGetResult = obj.content.ArrayDPAgreementGetResult.DPAgreementGetResult;
             }
+
+            //console.log(DPAgreementGetResult);
 
             var d = new Date(DPAgreementGetResult.DataPodpisania);
             var month = d.getMonth() + 1;
@@ -59,9 +61,10 @@ jQuery(document).ready(function($) {
 
             if (DPAgreementGetResult.UruchTestProg == '1' && dataDo > current) {
               if (typeof DPAgreementGetResult.RodzajUmocowania !== "undefined" && DPAgreementGetResult.RodzajUmocowania) {
+                //console.log(DPAgreementGetResult.RodzajUmocowania);
                 $('#rodo-rodzaj').val(DPAgreementGetResult.RodzajUmocowania);
               }
-              $('#zgoda-rodo').attr('checked', true);
+              $('#zgoda-rodo input').attr('checked', true);
               $('#data-umowy').val(output);
               $('#umowa-podpisana').val('1');
               $('#data-podpisania-umowy').html(output);
@@ -99,8 +102,11 @@ jQuery(document).ready(function($) {
   });
 
   $('.cf7-tab-2 .multistep-cf7-next').click(function(e) {
-
-    if ($('#umowa_id').val() == '' && $('#input-imie-klient').val() != '' && $('#input-nazwisko-klient').val() != '' && $('#rodo-rodzaj').val() != '' && $('#zgoda-rodo').prop('checked')) {
+    //console.log('before send rodo contract!');
+    //console.log($('#input-imie-klient').val());
+    //console.log($('#input-nazwisko-klient').val());
+    //console.log($('#rodo-rodzaj').val());
+    if ($('#umowa_id').val() == '' && $('#input-imie-klient').val() != '' && $('#input-nazwisko-klient').val() != '' && $('#rodo-rodzaj').val() != '' && $('#zgoda-rodo input').prop('checked')) {
       console.log('Send RODO contract!');
       $.ajax({
         type: "POST",

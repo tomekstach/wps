@@ -66,12 +66,14 @@ jQuery(document).ready(function($) {
   });
 
   $('#get-nip-online').click(function(e) {
+    console.log('Test!!!');
     if (!ValidateNip($('#input-nip').val(), '#input-nip')) {
-      $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
-      $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
+      console.log('Invalid!!!');
+      $('.wpcf7-form-control-wrap.yl-nip .wpcf7-not-valid-tip').remove();
+      $('.wpcf7-form-control-wrap.yl-nip').append('<span role="alert" class="wpcf7-not-valid-tip">NIP jest niepoprawny!</span>');
       return false;
     } else {
-      $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
+      $('.wpcf7-form-control-wrap.yl-nip .wpcf7-not-valid-tip').remove();
     }
 
     console.log('Check nip and get nip data!');
@@ -94,7 +96,7 @@ jQuery(document).ready(function($) {
         $('#input-firma-ulica').val(obj.content.address);
         $('#input-firma-imie').val(obj.content.firstname);
         $('#input-firma-nazwisko').val(obj.content.lastname);
-        $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
+        $('.wpcf7-form-control-wrap.yl-nip .wpcf7-not-valid-tip').remove();
         $('.firma .wpcf7-not-valid-tip').remove();
         $('.firma-miasto .wpcf7-not-valid-tip').remove();
         $('.firma-kod-pocztowy .wpcf7-not-valid-tip').remove();
@@ -102,8 +104,8 @@ jQuery(document).ready(function($) {
         $('.firma-imie .wpcf7-not-valid-tip').remove();
         $('.firma-nazwisko .wpcf7-not-valid-tip').remove();
       } else {
-        $('.wpcf7-form-control-wrap.NIP .wpcf7-not-valid-tip').remove();
-        $('.wpcf7-form-control-wrap.NIP').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');
+        $('.wpcf7-form-control-wrap.yl-nip .wpcf7-not-valid-tip').remove();
+        $('.wpcf7-form-control-wrap.yl-nip').append('<span role="alert" class="wpcf7-not-valid-tip">' + obj.content + '</span>');
       }
     });
   });
