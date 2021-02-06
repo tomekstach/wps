@@ -108,9 +108,10 @@ jQuery(document).ready(function($) {
   });
 
   function updatePodsuma() {
-    var html = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota</th></tr></thead><tbody>'
-    var htmlStandard = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota</th></tr></thead><tbody>'
+    var html = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota netto</th></tr></thead><tbody>'
+    var htmlStandard = '<table class="pp-table-5cba11d3badf1 pp-table-content tablesaw"><thead><tr><th id="pp-table-col-1" clas="pp-table-col">Szczegóły</th><th id="pp-table-col-2" clas="pp-table-col">Ilość stanowisk</th><th id="pp-table-col-3" clas="pp-table-col">Cena netto za szt.</th><th id="pp-table-col-4" clas="pp-table-col">Kwota netto</th></tr></thead><tbody>'
     var specjalna = false;
+    var demo = true;
     var iloscProduktow = 0;
     var suma = 0
     var suma_standard = 0;
@@ -159,7 +160,6 @@ jQuery(document).ready(function($) {
                 cena_standard[1] = products[produktNazwa][wersja][1];
               }
             }
-            specjalna = false;
           } else if ($(produkt).find('.kalk_wariant_s option:selected').text() != '-- Wybierz wariant --') {
             wersja = $(produkt).find('.kalk_wariant_s option:selected').text();
             cena = parseInt($(produkt).find('.kalk_wariant_s option:selected').val());
@@ -184,7 +184,6 @@ jQuery(document).ready(function($) {
                 cena_standard[1] = products[produktNazwa][wersja][1];
               }
             }
-            specjalna = true;
           }
         } else {
           if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
@@ -195,7 +194,6 @@ jQuery(document).ready(function($) {
             wersja = $(produkt).find('.kalk_wariant_s_os option:selected').not("[value=0]").text();
             wersja = $(produkt).find('.kalk_wariant_s option:selected').text() + ' ' + wersja;
             cena = parseInt($(produkt).find('.kalk_wariant_s_os option:selected').not("[value=0]").val());
-            specjalna = true;
           }
         }
 
@@ -205,19 +203,23 @@ jQuery(document).ready(function($) {
           var cenaRodzaj = 'cena podstawowa';
         }
 
+        if ($(produkt).find('.kalk_ps option:selected').text() == '8.5x.x -' || $(produkt).find('.kalk_ps option:selected').text() == '8.4x.x' || $(produkt).find('.kalk_ps option:selected').text() == '8.3x.x lub starszą') {
+          demo = false;
+        }
+
         if ($(produkt).find('.kalk_number').val()) {
           ilosc = parseInt($(produkt).find('.kalk_number').val());
           iloscProduktow += ilosc;
         }
 
         if (ilosc > 0 && cena > 0) {
-          html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena + ' PLN</td><td class="kwota"><span>' + (cena * ilosc) + '</span> PLN</td></tr>';
-          if (wersja != 'Start' && wersja != 'START') {
-            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS 1 stanowisko ' + produktNazwa + ' 365 ' + wersja + ' na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+          html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena.toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + (cena * ilosc).toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
+          if (wersja != 'Start' && wersja != 'START' && specjalna && specjalna != 'Nie mam (nowy zakup)') {
+            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS 1 stanowisko ' + produktNazwa + ' 365 ' + wersja + ' na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
 
           if (produktNazwa == 'WAPRO Mag' && (wersja == 'Prestiż' || wersja == 'Prestiż PLUS')) {
-            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
           suma += cena * ilosc;
           if (wersja != 'Start' && produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best') {
@@ -239,7 +241,7 @@ jQuery(document).ready(function($) {
     });
 
     if (iloscProduktow > 0) {
-      html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO Analizy 365 na pierwszy rok (promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/">Wybierz co chcesz</a>)</td></tr>';
+      html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO Analizy 365 na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
     }
 
     html += '</tbody></table>';
@@ -247,13 +249,9 @@ jQuery(document).ready(function($) {
     var zysk = suma_standard - suma;
     htmlStandard += '</tbody></table>';
 
-    if (specjalna) {
-      //html += '<p>* cena specjalna obowiązuje....</p>';
-    }
-
     //if (zysk > 0 && !cennik_ogolny) {
     if (!cennik_ogolny) {
-      $('#calculated-standard').val(suma_standard.toFixed(2).toString().replace(".", ",") + ' PLN');
+      $('#calculated-standard').val(suma_standard.toFixed(2).toString().replace(".", ",") + ' PLN netto');
 
       if (suma_standard > 0) {
         $('#kalk-podsuma-standard').html(htmlStandard);
@@ -261,12 +259,28 @@ jQuery(document).ready(function($) {
         $('#kalk-podsuma-standard').html('');
       }
 
+      html += '<div id="podsuma-zysk">';
+
       if (zysk > 0) {
-        html += '<div id="podsuma-zysk"><h4>Na abonamencie oszczędzasz</h4><p>';
-        html += '<span>' + ((zysk * 100) / suma_standard).toFixed(0).toString().replace(".", ",") + '</span> % czyli <span>' + zysk.toFixed(2).toString().replace(".", ",") + '</span> PLN</p></div>';
+        html += '<h4>Na abonamencie oszczędzasz</h4><p>';
+        html += '<span>' + ((zysk * 100) / suma_standard).toFixed(0).toString().replace(".", ",") + '</span> % czyli <span>' + zysk.toFixed(2).toString().replace(".", ",") + '</span> PLN</p>';
+      }
+
+      if (demo) {
+        html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
+      } else {
+        html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
       }
     } else {
       //console.log('Zysk: ' + suma_standard + ' - ' + suma);
+      html += '<div id="podsuma-zysk">';
+
+      if (demo) {
+        html += '<a href="https://wapro.pl/pobierz-demo/" target="_blank">Pobierz demo -></a></div>'
+      } else {
+        html += '<a href="https://wapro24.assecobs.pl/asystent/Default.htm" target="_blank">Pobierz aktualizacje -></a></div>'
+      }
+
       $('#kalk-podsuma-standard').html('');
       $('#calculated-standard').val('0,00 PLN');
     }

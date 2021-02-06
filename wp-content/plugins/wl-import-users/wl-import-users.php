@@ -11,7 +11,7 @@
  * Plugin Name:       WL Import Users
  * Plugin URI:        https://astosoft.pl
  * Description:       Simple plugin to import users from the old CMS (from the tables).
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            AstoSoft

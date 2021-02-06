@@ -10,6 +10,11 @@ jQuery(document).ready(function($) {
     $("#nowa-umowa").show();
   }
 
+  $('.program select').change(function() {
+    $('#cf7-container-builder-1559219370795 select').val("wybierz numer wersji");
+    $('#cf7-container-builder-1559219370795 option').removeAttr('selected');
+  });
+
   if (contract != '') {
     $.ajax({
       type: "POST",

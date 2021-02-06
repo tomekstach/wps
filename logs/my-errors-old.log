@@ -1,0 +1,19 @@
+2020-12-12 18:21:47 Wpcf7_Redirect: init 
+2020-12-12 18:21:50 Wpcf7_Redirect: init 
+2020-12-12 18:22:17 Wpcf7_Redirect: init 
+2020-12-12 18:22:25 Wpcf7_Redirect: init 
+2020-12-12 18:23:09 Wpcf7_Redirect: init 
+2020-12-12 19:23:12 functions: after_sent_mail 
+2020-12-12 18:24:51 Wpcf7_Redirect: init 
+2020-12-12 18:24:54 Wpcf7_Redirect: init 
+2020-12-12 18:25:19 Wpcf7_Redirect: init 
+2020-12-12 18:25:25 Wpcf7_Redirect: init 
+2020-12-12 18:25:47 Wpcf7_Redirect: init 
+2020-12-12 19:25:50 handle_valid_actions!!! 
+2020-12-12 19:25:50 PRE process_actions!!! 
+2020-12-12 19:25:50 process_actions!!! 
+2020-12-12 19:25:50 actions!!! 
+2020-12-12 19:25:50 process_action!!! 
+2020-12-12 19:25:50 WPCF7R_Action_Redirect: process 
+2020-12-12 19:25:50 WPCF7R_Action_Redirect response: {"type":"redirect","redirect_url":"https:\/\/wapro.pl\/dziekujemy-za-zamowienie-uslugi-online\/","delay":0} 
+2020-12-12 19:25:50 functions: after_sent_mail 
