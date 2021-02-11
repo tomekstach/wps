@@ -24,11 +24,13 @@ jQuery(document).ready(function($) {
   $('.kalk_wariant_s option:selected').prop("selected", false);
   $('.kalk_wariant_p_os option:selected').prop("selected", false);
   $('.kalk_wariant_s_os option:selected').prop("selected", false);
+  $('.kalk_wariant_portale_hr option:selected').prop("selected", false);
   $('.kalk_ps option:selected').prop("selected", false);
   $('.kalk_wariant_p').attr('disabled', true);
   $('.kalk_wariant_s').attr('disabled', true);
   $('.kalk_wariant_p_os').attr('disabled', true);
   $('.kalk_wariant_s_os').attr('disabled', true);
+  $('.kalk_wariant_portale_hr').attr('disabled', true);
   $('.kalk_ps').attr('disabled', true);
   $('.kalk_number').attr('disabled', true);
   $('.kalk-opis .wpcf7-list-item-label').html('');
@@ -44,6 +46,7 @@ jQuery(document).ready(function($) {
         $(produkt).find('.kalk_wariant_s').attr('disabled', false);
         $(produkt).find('.kalk_wariant_p_os').attr('disabled', false);
         $(produkt).find('.kalk_wariant_s_os').attr('disabled', false);
+        $(produkt).find('.kalk_wariant_portale_hr').attr('disabled', false);
         $(produkt).find('.kalk_ps').attr('disabled', false);
         $(produkt).find('.kalk_number').attr('disabled', false);
       } else {
@@ -56,6 +59,8 @@ jQuery(document).ready(function($) {
         $(produkt).find('.kalk_wariant_p_os').attr('disabled', true);
         $(produkt).find('.kalk_wariant_s_os option:selected').prop("selected", false);
         $(produkt).find('.kalk_wariant_s_os').attr('disabled', true);
+        $(produkt).find('.kalk_wariant_portale_hr option:selected').prop("selected", false);
+        $(produkt).find('.kalk_wariant_portale_hr').attr('disabled', true);
         $(produkt).find('.kalk_ps').attr('disabled', true);
         $(produkt).find('.kalk_number').val("");
         $(produkt).find('.kalk_number').attr('disabled', true);
@@ -98,6 +103,10 @@ jQuery(document).ready(function($) {
       updatePodsuma();
     });
 
+    $(produkt).find('.kalk_wariant_posrtal_hr').on('change', function() {
+      updatePodsuma();
+    });
+
     $(produkt).find('.kalk_number').on('input', function(e) {
       updatePodsuma();
     });
@@ -135,7 +144,7 @@ jQuery(document).ready(function($) {
 
         produktNazwa = $(produkt).find('.kalk_produkt input[type=checkbox]').val();
 
-        if (produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best') {
+        if (produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best' && produktNazwa != 'Portale HR') {
           if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
             wersja = $(produkt).find('.kalk_wariant_p option:selected').text();
             cena = parseInt($(produkt).find('.kalk_wariant_p option:selected').val());
@@ -186,7 +195,11 @@ jQuery(document).ready(function($) {
             }
           }
         } else {
-          if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
+          if (produktNazwa == 'Portale HR' && $(produkt).find('.kalk_portale_hr option:selected').text() != '-- Wybierz abonament --') {
+            wersja = $(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").text();
+            wersja = $(produkt).find('.kalk_portale_hr option:selected').text() + ' ' + wersja;
+            cena = parseInt($(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").val());
+          } else if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
             wersja = $(produkt).find('.kalk_wariant_p_os option:selected').not("[value=0]").text();
             wersja = $(produkt).find('.kalk_wariant_p option:selected').text() + ' ' + wersja;
             cena = parseInt($(produkt).find('.kalk_wariant_p_os option:selected').not("[value=0]").val());
@@ -211,6 +224,8 @@ jQuery(document).ready(function($) {
           ilosc = parseInt($(produkt).find('.kalk_number').val());
           iloscProduktow += ilosc;
         }
+
+        alert(ilosc + ' == ' + cena);
 
         if (ilosc > 0 && cena > 0) {
           html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena.toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + (cena * ilosc).toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
@@ -248,6 +263,8 @@ jQuery(document).ready(function($) {
 
     var zysk = suma_standard - suma;
     htmlStandard += '</tbody></table>';
+
+    alert('tu');
 
     //if (zysk > 0 && !cennik_ogolny) {
     if (!cennik_ogolny) {
