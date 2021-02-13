@@ -79,6 +79,17 @@ jQuery(document).ready(function($) {
       }
     });
 
+    $(produkt).find('.kalk_portale_hr').on('change', function() {
+      if ($(produkt).find('.kalk_portale_hr option:selected').text() == 'miesieczny') {
+        $(produkt).find('.kalk_wariant_portale_hr option:selected').prop("selected", false);
+        $(produkt).find('.kalk_number').val("");
+      } else {
+        $(produkt).find('.kalk_wariant_portale_hr option:selected').prop("selected", false);
+        $(produkt).find('.kalk_number').val("");
+      }
+      updatePodsuma();
+    });
+
     $(produkt).find('.kalk_wariant_p').on('change', function() {
       $(produkt).find('.kalk_wariant_p_os option:selected').prop("selected", false);
     });
@@ -103,7 +114,7 @@ jQuery(document).ready(function($) {
       updatePodsuma();
     });
 
-    $(produkt).find('.kalk_wariant_posrtal_hr').on('change', function() {
+    $(produkt).find('.kalk_wariant_portale_hr').on('change', function() {
       updatePodsuma();
     });
 
@@ -225,8 +236,6 @@ jQuery(document).ready(function($) {
           iloscProduktow += ilosc;
         }
 
-        alert(ilosc + ' == ' + cena);
-
         if (ilosc > 0 && cena > 0) {
           html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena.toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + (cena * ilosc).toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
           if (wersja != 'Start' && wersja != 'START' && specjalna && specjalna != 'Nie mam (nowy zakup)') {
@@ -237,7 +246,7 @@ jQuery(document).ready(function($) {
             html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
           suma += cena * ilosc;
-          if (wersja != 'Start' && produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best') {
+          if (wersja != 'Start' && produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best' && produktNazwa != 'Portale HR') {
             htmlStandard += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' ' + wersja + ' licencja na pierwsze stanowisko</td><td>1</td><td>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
             suma_standard += cena_standard[0];
             //console.log('cena_standard[0]: ' + cena_standard[0]);
@@ -246,7 +255,7 @@ jQuery(document).ready(function($) {
               suma_standard += (ilosc - 1) * cena_standard[1];
               htmlStandard += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' ' + wersja + ' licencja na dodatkowe stanowiska</td><td>' + (ilosc - 1) + '</td><td>' + cena_standard[1].toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + (cena_standard[1] * (ilosc - 1)).toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
             }
-          } else if (produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best') {
+          } else if (produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best' && produktNazwa != 'Portale HR') {
             htmlStandard += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' ' + wersja + '</td><td>1</td><td>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
             //console.log('cena_standard[0]: ' + cena_standard[0]);
             suma_standard += cena_standard[0];
@@ -263,8 +272,6 @@ jQuery(document).ready(function($) {
 
     var zysk = suma_standard - suma;
     htmlStandard += '</tbody></table>';
-
-    alert('tu');
 
     //if (zysk > 0 && !cennik_ogolny) {
     if (!cennik_ogolny) {
