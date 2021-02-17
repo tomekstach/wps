@@ -61,6 +61,7 @@ jQuery(document).ready(function($) {
         $(produkt).find('.kalk_wariant_s_os').attr('disabled', true);
         $(produkt).find('.kalk_wariant_portale_hr option:selected').prop("selected", false);
         $(produkt).find('.kalk_wariant_portale_hr').attr('disabled', true);
+        $(produkt).find('.kalk_portale_hr option:selected').prop("selected", false);
         $(produkt).find('.kalk_ps').attr('disabled', true);
         $(produkt).find('.kalk_number').val("");
         $(produkt).find('.kalk_number').attr('disabled', true);
@@ -135,6 +136,7 @@ jQuery(document).ready(function($) {
     var iloscProduktow = 0;
     var suma = 0
     var suma_standard = 0;
+    var gratis = false;
 
     $('.kalk-row').each(function(index) {
       var produkt = this;
@@ -210,6 +212,10 @@ jQuery(document).ready(function($) {
             wersja = $(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").text();
             wersja = $(produkt).find('.kalk_portale_hr option:selected').text() + ' ' + wersja;
             cena = parseInt($(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").val());
+
+            if ($(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").val() != '0' && !(cena > 0)) {
+              cena = $(produkt).find('.kalk_wariant_portale_hr option:selected').not("[value=0]").val();
+            }
           } else if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
             wersja = $(produkt).find('.kalk_wariant_p_os option:selected').not("[value=0]").text();
             wersja = $(produkt).find('.kalk_wariant_p option:selected').text() + ' ' + wersja;
@@ -234,17 +240,22 @@ jQuery(document).ready(function($) {
         if ($(produkt).find('.kalk_number').val()) {
           ilosc = parseInt($(produkt).find('.kalk_number').val());
           iloscProduktow += ilosc;
+
+          if (produktNazwa == 'Portale HR' && ilosc > 0) {
+            gratis = true;
+          }
         }
 
-        if (ilosc > 0 && cena > 0) {
+        if (ilosc > 0 && cena > 0 && typeof(cena) == 'number') {
           html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cenaRodzaj + ' ' + cena.toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + (cena * ilosc).toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
           if (wersja != 'Start' && wersja != 'START' && specjalna && specjalna != 'Nie mam (nowy zakup)') {
             html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS 1 stanowisko ' + produktNazwa + ' 365 ' + wersja + ' na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
 
           if (produktNazwa == 'WAPRO Mag' && (wersja == 'Prestiż' || wersja == 'Prestiż PLUS')) {
-            html += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
+            htmlStandard += '<tr class="pp-table-row odd"><td colspan="4">Dodatkowo GRATIS WAPRO B2B na pierwszy rok <strong>(promocja <a href="https://wapro.pl/promocje/wybierz-co-chcesz/" target="_blank" class="kalk-promo-link">Wybierz co chcesz</a>)</strong></td></tr>';
           }
+
           suma += cena * ilosc;
           if (wersja != 'Start' && produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best' && produktNazwa != 'Portale HR') {
             htmlStandard += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' ' + wersja + ' licencja na pierwsze stanowisko</td><td>1</td><td>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + ' PLN</td><td class="kwota"><span>' + cena_standard[0].toFixed(2).toString().replace(".", ",") + '</span> PLN</td></tr>';
@@ -260,6 +271,12 @@ jQuery(document).ready(function($) {
             //console.log('cena_standard[0]: ' + cena_standard[0]);
             suma_standard += cena_standard[0];
           }
+        } else if (ilosc > 0 && cena != '' && typeof(cena) == 'string') {
+          html += '<tr class="pp-table-row odd"><td>' + produktNazwa + ' 365 ' + wersja + '</td><td>' + ilosc + '</td><td>' + cena + '</td><td class="kwota"><span>' + cena + '</span></td></tr>';
+        }
+
+        if (produktNazwa == 'Portale HR') {
+          html += '<tr class="pp-table-row odd"><td colspan="4">UWAGA: wymagany WAPRO Gang w najnowszej wersji!</td></tr>';
         }
       }
     });
@@ -309,7 +326,7 @@ jQuery(document).ready(function($) {
       $('#calculated-standard').val('0,00 PLN');
     }
 
-    if (suma > 0) {
+    if (suma > 0 || gratis == true) {
       $('.kalk-suma').each(function(index) {
         if ($(this).css('display') == 'none') {
           $(this).css('display', 'block');
