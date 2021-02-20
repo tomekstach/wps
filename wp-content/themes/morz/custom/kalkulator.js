@@ -239,7 +239,9 @@ jQuery(document).ready(function($) {
 
         if ($(produkt).find('.kalk_number').val()) {
           ilosc = parseInt($(produkt).find('.kalk_number').val());
-          iloscProduktow += ilosc;
+          if (produktNazwa != 'Portale HR') {
+            iloscProduktow += ilosc;
+          }
 
           if (produktNazwa == 'Portale HR' && ilosc > 0) {
             gratis = true;
