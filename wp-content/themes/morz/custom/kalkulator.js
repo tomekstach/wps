@@ -157,6 +157,10 @@ jQuery(document).ready(function($) {
 
         produktNazwa = $(produkt).find('.kalk_produkt input[type=checkbox]').val();
 
+        if (produktNazwa == 'Portale HR') {
+          $(produkt).find('.kalk_number').val('1');
+        }
+
         if (produktNazwa != 'WAPRO Gang' && produktNazwa != 'WAPRO Best' && produktNazwa != 'Portale HR') {
           if ($(produkt).find('.kalk_wariant_p option:selected').text() != '-- Wybierz wariant --') {
             wersja = $(produkt).find('.kalk_wariant_p option:selected').text();
