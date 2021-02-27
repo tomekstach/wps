@@ -21,13 +21,13 @@ function wl_rodo_page_html()
 
         $client = new SoapClient($url, array("trace" => 1, "exception" => 0));
 
-        // args
+        // TODO: Write standard SQL query to get all umowa_serwisowa which dos not have zapisana_w_erp
         $args = array(
           'post_type'=> 'umowa_serwisowa'
         );              
         // 55951
-        $contract = get_post('55951');
-        print_r($contract);
+        $contract = get_post('55930');
+        //print_r($contract);
         ?>
         <table>
           <thead>
@@ -41,15 +41,25 @@ function wl_rodo_page_html()
           </thead>
           <tbody>
         <?php
-        foreach ($posts as $post) {
+        //foreach ($posts as $contract) {
           $umowa = new \stdClass;
-          $umowa->id                  = $post->ID;
+          $umowa->id                  = $contract->ID;
           $umowa->NIP                 = get_field('nip_klienta', $umowa->id);
           $umowa->imie_i_nazwisko     = get_field('imie_i_nazwisko', $umowa->id);
           $umowa->data_zgloszenia     = get_the_date('d.m.Y H:i', $umowa->id);
           $umowa->data_podpisania_umowy = get_field("data_podpisania_umowy", $umowa->id);
-          $umowa->rodzaj_umowy        = get_field("rodzaj_umowy", $umowa->id);
+          $umowa->rodzaj_umowy        = $rodzaj_umowy = get_field("rodzaj_umowy", $umowa->id);
           $umowa->zapisana_w_erp      = get_field("zapisana_w_erp", $umowa->id);
+
+          if (is_array($umowa->zapisana_w_erp)) {
+            if (count($umowa->zapisana_w_erp) > 0) {
+              $umowa->zapisana_w_erp = $umowa->zapisana_w_erp[0];
+            } else {
+              $umowa->zapisana_w_erp = false;
+            }
+          } else {
+            $umowa->zapisana_w_erp = false;
+          }
 
           if ($umowa->zapisana_w_erp != 'tak') {
             $paramsAgreement   = ['ArrayDPAgreementGetData' => ['DPAgreementGetData' => ['NIPSameCyfry' => $umowa->NIP]]];
@@ -60,6 +70,11 @@ function wl_rodo_page_html()
             } else {
               $DPAgreementGetResult = $responseAgreement->ArrayDPAgreementGetResult->DPAgreementGetResult;
             }
+
+            if ($DPAgreementGetResult->$rodzaj_umowy == '1') {
+              update_field('zapisana_w_erp', 'tak', 'post_' . $umowa->id);
+              $umowa->zapisana_w_erp = 'tak';
+            }
           }
           ?>
           <tr>
@@ -68,11 +83,11 @@ function wl_rodo_page_html()
             <td><?php echo $umowa->imie_i_nazwisko;?></td>
             <td><?php echo $umowa->data_zgloszenia;?></td>
             <td><?php echo $umowa->data_podpisania_umowy;?></td>
-            <td><?php echo print_r($umowa->rodzaj_umowy, true);?></td>
+            <td><?php echo $umowa->rodzaj_umowy;?></td>
             <td><?php echo $umowa->zapisana_w_erp;?></td>
           </tr>
           <?php
-        }?>
+        //}?>
           </tbody>
         </table>
         <?php
