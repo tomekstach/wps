@@ -752,7 +752,7 @@ add_filter('wpcf7_validate_text*', 'custom_archive_text_validation_filter', 20, 
 
 function custom_archive_text_validation_filter($result, $tag)
 {
-  if ($tag->name == 'your-nip-register' or $tag->name == 'NIP' or $tag->name == 'yl-nip' or $tag->name == 'numbernip') {
+  if ($tag->name == 'your-nip-register' or $tag->name == 'NIP' or $tag->name == 'yl-nip' or $tag->name == 'numbernip' or $tag->name == 'NIPzlecajacej') {
 
     global $badNIPs;
     //$nip = '7171642051';
@@ -840,7 +840,7 @@ add_filter('wpcf7_validate_text', 'custom_text_validation_filter', 20, 2);
 
 function custom_text_validation_filter($result, $tag)
 {
-  if ($tag->name == 'partner-NIP' or $tag->name == 'biuro-NIP' or $tag->name == 'numbernip') {
+  if ($tag->name == 'partner-NIP' or $tag->name == 'biuro-NIP' or $tag->name == 'numbernip' or $tag->name == 'NIPklienta') {
 
     global $badNIPs;
     $nip = preg_replace('/\s+/', '', str_replace('-', '', strip_tags($_POST[$tag->name])));
